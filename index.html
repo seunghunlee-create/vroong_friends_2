@@ -324,8 +324,9 @@ table tbody tr:hover { background: #f9fafb; }
       <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
         <strong>비교 기준</strong>: 분석 기간 첫 2일(5/1, 5/2) 평균 vs 마지막 2일(5/20, 5/21) 평균<br>
         <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
-        <strong>대상</strong>: 프렌즈 완료 오더(EMPLOYMENT_TYPE = 부릉프렌즈)만 ・ 시군구(ORIGIN_SI_DO + ORIGIN_SI_GUN_GU) 단위 ・ 첫 2일 평균이 일 50건 이상인 시군구만 비교<br>
-        <strong>해석</strong>: 양수(+)는 프렌즈 활용이 증가한 권역. 라이더 채용 성공/물량 유입을 의미합니다.
+        <strong>대상</strong>: 프렌즈 완료 오더(EMPLOYMENT_TYPE = 부릉프렌즈)만 ・ 시군구(ORIGIN_SI_DO + ORIGIN_SI_GUN_GU) 단위 ・ 첫 2일 평균이 일 10건 이상인 시군구만 비교<br>
+        <strong>해석</strong>: 양수(+)는 프렌즈 활용이 증가한 권역. 라이더 채용 성공/물량 유입을 의미합니다.<br>
+        <strong>임계값 조정 사유</strong>: 5월 후반 프렌즈 물량이 전반적으로 감소하여, ≥50건 시군구 중 양수 증가가 없어 임계값을 ≥10건으로 완화했습니다(급락은 ≥50 유지).
       </div>
       <div class="toplist" id="friendsSurgeList"></div>
     </div>
@@ -930,11 +931,11 @@ renderTopList("declineList", declineData, true);
 
 // === 프렌즈 시군구 급등/급락 Top 5 ===
 const friendsSurgeData = [
-  { rank: 1, name: "부산광역시 해운대구",   early:  72, late:  72, change:   -1, pct:  -1.38 },
-  { rank: 2, name: "서울특별시 강남구",     early: 522, late: 462, change:  -60, pct: -11.48 },
-  { rank: 3, name: "경기도 시흥시",         early:  76, late:  65, change:  -11, pct: -15.03 },
-  { rank: 4, name: "서울특별시 금천구",     early:  67, late:  56, change:  -11, pct: -17.16 },
-  { rank: 5, name: "서울특별시 동대문구",   early: 174, late: 140, change:  -34, pct: -19.60 },
+  { rank: 1, name: "서울특별시 종로구",       early: 12, late: 18, change: 6, pct: 52.17 },
+  { rank: 2, name: "경상북도 포항시 남구",   early: 13, late: 18, change: 5, pct: 42.31 },
+  { rank: 3, name: "경기도 구리시",           early: 16, late: 19, change: 3, pct: 15.15 },
+  { rank: 4, name: "경기도 광명시",           early: 44, late: 46, change: 2, pct:  4.49 },
+  { rank: 5, name: "서울특별시 은평구",       early: 43, late: 44, change: 1, pct:  1.16 },
 ];
 
 const friendsDeclineData = [
@@ -1269,6 +1270,14 @@ document.getElementById("yogiyoRegionTableFoot").innerHTML = `
     <td class="num" style="padding:10px 12px;color:#ED7D31">${fmt(yrTotFriends)}</td>
     <td class="center" style="padding:10px 12px"><span style="background:#eef2ff;color:#3730a3;padding:3px 8px;border-radius:5px;font-weight:700">${yrTotFrPct.toFixed(2)}%</span></td>
     <td class="center" style="padding:10px 12px">${slaBadge(76.82)}</td>
+    <td class="center" style="padding:10px 12px">${slaBadge(76.48)}</td>
+    <td class="center" style="padding:10px 12px">${slaBadge(79.20)}</td>
+  </tr>
+`;
+</script>
+</body>
+</html>
+px">${slaBadge(76.82)}</td>
     <td class="center" style="padding:10px 12px">${slaBadge(76.48)}</td>
     <td class="center" style="padding:10px 12px">${slaBadge(79.20)}</td>
   </tr>
