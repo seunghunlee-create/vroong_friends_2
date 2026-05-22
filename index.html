@@ -355,28 +355,6 @@ table tbody tr:hover { background: #f9fafb; }
       <span style="background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:600">※ 올리브영 프랜차이즈 제외</span>
     </div>
     <div id="nvpZoneCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px"></div>
-    <div style="margin-top:18px">
-      <table>
-        <thead>
-          <tr>
-            <th>Zone</th>
-            <th>관제지점 코드</th>
-            <th class="num">지점 완료</th>
-            <th class="num">프렌즈 완료</th>
-            <th class="num">합계</th>
-            <th class="center">프렌즈 비율</th>
-            <th class="num" style="color:#92400e">올리브영 제외</th>
-            <th class="center">SLA 달성</th>
-            <th class="center">SLA 달성율</th>
-          </tr>
-        </thead>
-        <tbody id="nvpZoneTable"></tbody>
-        <tfoot id="nvpZoneTableFoot"></tfoot>
-      </table>
-      <div style="font-size:11px;color:#9ca3af;margin-top:6px">
-        ※ 프렌즈 비율 = 프렌즈 완료 ÷ 전체 완료 오더(지점 + 프렌즈) × 100%
-      </div>
-    </div>
   </div>
 
   <!-- 요기요 아침시간 트래킹 -->
@@ -815,6 +793,7 @@ const nvpZoneData = {
     { zone: "B_원미",   codes: ["p1292B","p1255B"], branch: 105, friends: 477, total: 582, oy_excluded: 36, sla_within: 492, sla_total: 546, sla_rate: 90.11 },
     { zone: "B_성북",   codes: ["p943A"],            branch:  90, friends:  26, total: 116, oy_excluded: 32, sla_within:  80, sla_total:  84, sla_rate: 95.24 },
     { zone: "B_동대문", codes: ["p1054A"],            branch: 281, friends:  42, total: 323, oy_excluded: 74, sla_within: 232, sla_total: 249, sla_rate: 93.17 },
+    { zone: "B_해운대", codes: ["p167C"],              branch: 237, friends:  83, total: 320, oy_excluded: 64, sla_within: 220, sla_total: 256, sla_rate: 85.94 },
   ]
 };
 
@@ -864,48 +843,6 @@ nvpZoneData.zones.forEach(z => {
   `;
   nvpZoneCards.appendChild(card);
 });
-
-// Table
-const nvpZoneTable = document.getElementById("nvpZoneTable");
-let totBranchZ = 0, totFriendsZ = 0, totTotalZ = 0, totOYZ = 0, totSLAWithinZ = 0, totSLATotalZ = 0;
-nvpZoneData.zones.forEach(z => {
-  totBranchZ += z.branch;
-  totFriendsZ += z.friends;
-  totTotalZ += z.total;
-  totOYZ += z.oy_excluded;
-  totSLAWithinZ += z.sla_within;
-  totSLATotalZ += z.sla_total;
-  const c = slaColor(z.sla_rate);
-  const friendsRatio = z.total > 0 ? (z.friends / z.total * 100) : 0;
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td style="font-weight:600">${z.zone}</td>
-    <td style="font-size:11px;color:#6b7280">${z.codes.join(", ")}</td>
-    <td class="num">${fmt(z.branch)}</td>
-    <td class="num">${fmt(z.friends)}</td>
-    <td class="num"><strong>${fmt(z.total)}</strong></td>
-    <td class="center"><span style="background:#eef2ff;color:#3730a3;padding:3px 8px;border-radius:5px;font-weight:700">${friendsRatio.toFixed(2)}%</span></td>
-    <td class="num" style="color:#92400e">-${fmt(z.oy_excluded)}</td>
-    <td class="center" style="font-size:12px;color:#6b7280">${fmt(z.sla_within)} / ${fmt(z.sla_total)}</td>
-    <td class="center"><span style="background:${c.bg};color:${c.color};padding:3px 8px;border-radius:5px;font-weight:700">${z.sla_rate.toFixed(2)}%</span></td>
-  `;
-  nvpZoneTable.appendChild(tr);
-});
-const totSLARate = totSLATotalZ > 0 ? (totSLAWithinZ/totSLATotalZ*100) : 0;
-const totC = slaColor(totSLARate);
-const totFriendsRatio = totTotalZ > 0 ? (totFriendsZ / totTotalZ * 100) : 0;
-document.getElementById("nvpZoneTableFoot").innerHTML = `
-  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #2E75B6">
-    <td style="padding:10px 12px" colspan="2">합계</td>
-    <td class="num" style="padding:10px 12px">${fmt(totBranchZ)}</td>
-    <td class="num" style="padding:10px 12px">${fmt(totFriendsZ)}</td>
-    <td class="num" style="padding:10px 12px">${fmt(totTotalZ)}</td>
-    <td class="center" style="padding:10px 12px"><span style="background:#eef2ff;color:#3730a3;padding:3px 8px;border-radius:5px;font-weight:700">${totFriendsRatio.toFixed(2)}%</span></td>
-    <td class="num" style="padding:10px 12px;color:#92400e">-${fmt(totOYZ)}</td>
-    <td class="center" style="padding:10px 12px;font-size:12px;color:#6b7280">${fmt(totSLAWithinZ)} / ${fmt(totSLATotalZ)}</td>
-    <td class="center" style="padding:10px 12px"><span style="background:${totC.bg};color:${totC.color};padding:3px 8px;border-radius:5px;font-weight:700">${totSLARate.toFixed(2)}%</span></td>
-  </tr>
-`;
 
 // === Top 5 lists ===
 function renderTopList(elId, data, isDecline=false) {
@@ -1270,14 +1207,6 @@ document.getElementById("yogiyoRegionTableFoot").innerHTML = `
     <td class="num" style="padding:10px 12px;color:#ED7D31">${fmt(yrTotFriends)}</td>
     <td class="center" style="padding:10px 12px"><span style="background:#eef2ff;color:#3730a3;padding:3px 8px;border-radius:5px;font-weight:700">${yrTotFrPct.toFixed(2)}%</span></td>
     <td class="center" style="padding:10px 12px">${slaBadge(76.82)}</td>
-    <td class="center" style="padding:10px 12px">${slaBadge(76.48)}</td>
-    <td class="center" style="padding:10px 12px">${slaBadge(79.20)}</td>
-  </tr>
-`;
-</script>
-</body>
-</html>
-px">${slaBadge(76.82)}</td>
     <td class="center" style="padding:10px 12px">${slaBadge(76.48)}</td>
     <td class="center" style="padding:10px 12px">${slaBadge(79.20)}</td>
   </tr>
