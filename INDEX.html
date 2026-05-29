@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>일별 완료 오더 대시보드 (2026.5.1 ~ 5.28)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "Segoe UI", "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
+  background: #f4f6fa;
+  color: #1f2937;
+  line-height: 1.55;
+  padding: 24px;
+  min-height: 100vh;
+}
+.dashboard { max-width: 1440px; margin: 0 auto; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #2E75B6 0%, #1d4f80 100%);
+  color: white;
+  padding: 28px 32px;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(46,117,182,0.25);
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
+.header .subtitle { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+.header-meta { text-align: right; font-size: 13px; opacity: 0.9; }
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* KPI cards */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-left: 4px solid var(--accent, #2E75B6);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+.kpi-label { font-size: 12px; color: #6b7280; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-value { font-size: 28px; font-weight: 700; color: #111827; margin-top: 6px; letter-spacing: -0.5px; }
+.kpi-sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+.kpi-change { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-top: 4px; }
+.up { background: #d1fae5; color: #065f46; }
+.down { background: #fee2e2; color: #991b1b; }
+
+/* Sections */
+.grid { display: grid; gap: 20px; margin-bottom: 24px; }
+.grid-2 { grid-template-columns: 2fr 1fr; }
+.grid-1-1 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1024px) {
+  .grid-2, .grid-1-1 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.card h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card h2::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background: #2E75B6;
+  border-radius: 2px;
+}
+
+.chart-container { position: relative; height: 320px; }
+.chart-container.tall { height: 360px; }
+.chart-container.short { height: 240px; }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table thead th {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+table tbody td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
+table tbody tr:hover { background: #f9fafb; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.center { text-align: center; }
+.surge { color: #047857; font-weight: 600; }
+.decline { color: #b91c1c; font-weight: 600; }
+.muted { color: #9ca3af; }
+
+/* Top5 lists */
+.toplist { display: flex; flex-direction: column; gap: 10px; }
+.toplist-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  gap: 12px;
+}
+.toplist-item .rank {
+  width: 28px; height: 28px;
+  flex: 0 0 28px;
+  background: #2E75B6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+.toplist-item.decline-item .rank { background: #C00000; }
+.toplist-item .name { font-size: 13px; font-weight: 600; flex: 1; color: #111827; }
+.toplist-item .detail { font-size: 11px; color: #6b7280; margin-top: 2px; }
+.toplist-item .pct { font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
+.toplist-item .pct.up { background: #d1fae5; color: #065f46; }
+.toplist-item .pct.down { background: #fee2e2; color: #991b1b; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+.tab {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.tab.active { color: #2E75B6; border-bottom-color: #2E75B6; }
+.tab:hover { color: #2E75B6; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Notes */
+.notes {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #92400e;
+}
+.notes ul { margin-left: 20px; margin-top: 6px; }
+.notes li { margin-bottom: 4px; }
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+</style>
+</head>
+<body>
+<div class="dashboard">
+
+  <div class="header">
+    <div>
+      <h1>일별 완료 오더 대시보드</h1>
+      <div class="subtitle">2026년 5월 1일 ~ 5월 28일 (28일간)</div>
+    </div>
+    <div class="header-meta">
+      <div>데이터 출처: 오더/배송 raw (Snowflake)</div>
+      <div>작성일: 2026.5.29</div>
+      <div class="badge">완료 오더 기준 (취소 제외)</div>
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="--accent:#2E75B6">
+      <div class="kpi-label">총 완료 오더</div>
+      <div class="kpi-value">4,852,123</div>
+      <div class="kpi-sub">일평균 173,290건 (28일)</div>
+    </div>
+    <div class="kpi-card" style="--accent:#10b981">
+      <div class="kpi-label">기간 내 최고</div>
+      <div class="kpi-value">215,364</div>
+      <div class="kpi-sub">5/3 (일) — 피크</div>
+    </div>
+    <div class="kpi-card" style="--accent:#ef4444">
+      <div class="kpi-label">기간 내 최저</div>
+      <div class="kpi-value">138,657</div>
+      <div class="kpi-sub">5/6 (수) — 저점</div>
+    </div>
+    <div class="kpi-card" style="--accent:#2E75B6">
+      <div class="kpi-label">지점 비중</div>
+      <div class="kpi-value">96.38<span style="font-size:18px">%</span></div>
+      <div class="kpi-sub">4,676,412건</div>
+    </div>
+    <div class="kpi-card" style="--accent:#ED7D31">
+      <div class="kpi-label">프렌즈 비중</div>
+      <div class="kpi-value">3.62<span style="font-size:18px">%</span></div>
+      <div class="kpi-sub">175,711건</div>
+    </div>
+    <div class="kpi-card" style="--accent:#8b5cf6">
+      <div class="kpi-label">취소율</div>
+      <div class="kpi-value">2.24<span style="font-size:18px">%</span></div>
+      <div class="kpi-sub">취소 111,410건 (참고)</div>
+    </div>
+    <div class="kpi-card" style="--accent:#0ea5e9">
+      <div class="kpi-label">5월 프렌즈 목표</div>
+      <div class="kpi-value">183,556</div>
+      <div class="kpi-sub">위탁 150,787 + 직영 32,769</div>
+    </div>
+    <div class="kpi-card" style="--accent:#f59e0b">
+      <div class="kpi-label">5월 프렌즈 예상</div>
+      <div class="kpi-value">194,517</div>
+      <div class="kpi-sub">5/28 일평균 ×31일 ・ <span style="color:#047857;font-weight:700">목표 달성률 106.0%</span></div>
+    </div>
+  </div>
+
+  <!-- Trend Chart -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>부릉 전체 물량/완료 오더 추이</h2>
+    <div style="overflow-x:auto;text-align:center;line-height:0">
+      <canvas id="trendChart" width="1280" height="280" style="display:inline-block;vertical-align:bottom"></canvas>
+    </div>
+  </div>
+
+  <!-- Daily Detail (horizontal) -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>일자별 상세</h2>
+    <div style="overflow-x:auto">
+      <table id="dailyTableH" style="border-collapse:collapse;width:100%">
+        <tbody id="dailyTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Type Ratio -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>일자별 지점 vs 프렌즈 구성</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>일자</th>
+          <th class="num">지점</th>
+          <th class="num">프렌즈</th>
+          <th class="num">총계</th>
+          <th class="center">지점 비중</th>
+          <th class="center">프렌즈 비중</th>
+        </tr>
+      </thead>
+      <tbody id="typeTable"></tbody>
+      <tfoot id="typeTableFoot"></tfoot>
+    </table>
+  </div>
+
+  <!-- Top 5 Surge / Decline -->
+  <div class="grid grid-1-1">
+    <div class="card">
+      <h2 style="color:#047857">지점 물량 급등 지역 Top 5</h2>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
+        <strong>비교 기준</strong>: 분석 기간 첫 2일(5/1, 5/2) 평균 vs 마지막 2일(5/27, 5/28) 평균<br>
+        <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
+        <strong>대상</strong>: 관제지점(MONITORING_PARTNER_NAME) 단위 ・ 첫 2일 평균이 일 100건 이상인 지점만 비교(소표본 노이즈 제거)<br>
+        <strong>해석</strong>: 양수(+)는 후반 물량이 늘어난 지점, 음수(−)는 줄어든 지점. 신규/이관 지점도 포함됩니다.
+      </div>
+      <div class="toplist" id="surgeList"></div>
+    </div>
+    <div class="card">
+      <h2 style="color:#b91c1c">지점 물량 급락 지역 Top 5</h2>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
+        <strong>비교 기준</strong>: 분석 기간 첫 2일(5/1, 5/2) 평균 vs 마지막 2일(5/27, 5/28) 평균<br>
+        <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
+        <strong>대상</strong>: 관제지점(MONITORING_PARTNER_NAME) 단위 ・ 첫 2일 평균이 일 100건 이상인 지점만 비교(소표본 노이즈 제거)<br>
+        <strong>해석</strong>: −100%는 후반 2일 모두 0건(폐쇄·이관·코드 변경 가능성) ・ 동일 권역 신규 지점과 페어 확인 권장.
+      </div>
+      <div class="toplist" id="declineList"></div>
+    </div>
+  </div>
+
+  <!-- 프렌즈 시군구 급등/급락 Top 5 -->
+  <div class="grid grid-1-1">
+    <div class="card">
+      <h2 style="color:#047857">프렌즈 물량 급등 시군구 Top 5</h2>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
+        <strong>비교 기준</strong>: 분석 기간 첫 2일(5/1, 5/2) 평균 vs 마지막 2일(5/27, 5/28) 평균<br>
+        <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
+        <strong>대상</strong>: 프렌즈 완료 오더(EMPLOYMENT_TYPE = 부릉프렌즈)만 ・ 시군구(ORIGIN_SI_DO + ORIGIN_SI_GUN_GU) 단위 ・ 첫 2일 평균이 일 50건 이상인 시군구만 비교<br>
+        <strong>해석</strong>: 양수(+)는 프렌즈 활용이 증가한 권역. 라이더 채용 성공/물량 유입을 의미합니다.
+      </div>
+      <div class="toplist" id="friendsSurgeList"></div>
+    </div>
+    <div class="card">
+      <h2 style="color:#b91c1c">프렌즈 물량 급락 시군구 Top 5</h2>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
+        <strong>비교 기준</strong>: 분석 기간 첫 2일(5/1, 5/2) 평균 vs 마지막 2일(5/27, 5/28) 평균<br>
+        <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
+        <strong>대상</strong>: 프렌즈 완료 오더(EMPLOYMENT_TYPE = 부릉프렌즈)만 ・ 시군구(ORIGIN_SI_DO + ORIGIN_SI_GUN_GU) 단위 ・ 첫 2일 평균이 일 50건 이상인 시군구만 비교<br>
+        <strong>해석</strong>: 음수(−)는 프렌즈 활용이 줄어든 권역. 라이더 이탈/물량 감소/타사 채널 전환 등 점검 필요.
+      </div>
+      <div class="toplist" id="friendsDeclineList"></div>
+    </div>
+  </div>
+
+  <!-- NVP B Zone 현황 -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      NVP B zone 현황
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ 마지막 일자: <span id="nvpDate" style="color:#2E75B6;font-weight:600"></span> 기준
+      </span>
+    </h2>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:14px">
+      SLA 달성율 = CREATED_AT → DELIVERED_AT 40분 이내 완료 오더 비율
+      <span style="background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:600">※ 올리브영 프랜차이즈 제외</span>
+    </div>
+    <div id="nvpZoneCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px"></div>
+  </div>
+
+  <!-- 요기요 아침시간 트래킹 -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      요기요 아침시간 (09:00~10:00) 트래킹
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ FRANCHISE_NAME = 요기요 ・ CREATED_AT 09시대 기준
+      </span>
+    </h2>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:14px">
+      일자별 지점 완료 / 프렌즈 완료 / 취소 건 추이
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>일자</th>
+          <th class="num">총 오더수</th>
+          <th class="num">지점 완료</th>
+          <th class="num">프렌즈 완료</th>
+          <th class="num">취소 오더수</th>
+          <th class="num">총 완료 오더수<br><span style="font-size:10px;font-weight:400;color:#9ca3af">(지점+프렌즈)</span></th>
+          <th class="center">취소율</th>
+          <th class="center">지점 수행 비율</th>
+          <th class="center">프렌즈 수행 비율</th>
+        </tr>
+      </thead>
+      <tbody id="yogiyoMorningTable"></tbody>
+      <tfoot id="yogiyoMorningTableFoot"></tfoot>
+    </table>
+    <div style="font-size:11px;color:#9ca3af;margin-top:6px">
+      ※ 총 오더수 = 지점 완료 + 프렌즈 완료 + 취소 ・ 총 완료 오더수 = 지점 완료 + 프렌즈 완료 (취소 제외)<br>
+      ※ 수행 비율 = 해당 유형 완료 ÷ 총 완료 오더수 × 100%
+    </div>
+  </div>
+
+  <!-- 스타벅스 아침시간 트래킹 -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      스타벅스 아침시간 (08:00~10:00) 트래킹
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ FRANCHISE_NAME = (주)스타벅스커피 코리아 ・ CREATED_AT 08~09시대 기준
+      </span>
+    </h2>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:14px">
+      일자별 지점 완료 / 프렌즈 완료 / 취소 건 추이
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>일자</th>
+          <th class="num">총 오더수</th>
+          <th class="num">지점 완료</th>
+          <th class="num">프렌즈 완료</th>
+          <th class="num">취소 오더수</th>
+          <th class="num">총 완료 오더수<br><span style="font-size:10px;font-weight:400;color:#9ca3af">(지점+프렌즈)</span></th>
+          <th class="center">취소율</th>
+          <th class="center">지점 수행 비율</th>
+          <th class="center">프렌즈 수행 비율</th>
+        </tr>
+      </thead>
+      <tbody id="starbucksMorningTable"></tbody>
+      <tfoot id="starbucksMorningTableFoot"></tfoot>
+    </table>
+    <div style="font-size:11px;color:#9ca3af;margin-top:6px">
+      ※ 총 오더수 = 지점 완료 + 프렌즈 완료 + 취소 ・ 총 완료 오더수 = 지점 완료 + 프렌즈 완료 (취소 제외)<br>
+      ※ 수행 비율 = 해당 유형 완료 ÷ 총 완료 오더수 × 100%
+    </div>
+  </div>
+
+  <!-- 프렌즈 활성화 추천 지역 -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      🎯 프렌즈 활성화 추천 지역 Top 10
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ 7일치 누적 데이터 기반 잠재력 분석
+      </span>
+    </h2>
+    <div style="background:#eef2ff;border-left:4px solid #4338ca;padding:12px 16px;border-radius:8px;font-size:13px;color:#3730a3;margin-bottom:14px">
+      <strong>🔍 분석 기준</strong><br>
+      ① 일평균 1,000건+ 시장 (수요 충분)  ②  현재 프렌즈 비중 &lt; 3.70% (전체 평균 미달)<br>
+      ③ 잠재 일평균 추가 프렌즈 오더 = 일평균 × (3.70% − 현 프렌즈 비중) <br>
+      <strong>벤치마크 성공 사례</strong>: 서울 강남구 29.24%, 서초구 13.67%, 대구 달서구 11.47%, 서울 관악구 10.41%, 경기 김포시 8.98%
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th class="center">순위</th>
+          <th>시군구</th>
+          <th class="num">일평균 오더</th>
+          <th class="center">현재 프렌즈 비중</th>
+          <th class="center">평균 대비 GAP</th>
+          <th class="num">잠재 일프렌즈</th>
+          <th class="num">잠재 주간(7일)</th>
+        </tr>
+      </thead>
+      <tbody id="friendsRecTable"></tbody>
+      <tfoot id="friendsRecTableFoot"></tfoot>
+    </table>
+    <div style="font-size:11px;color:#9ca3af;margin-top:6px">
+      ※ "잠재 일프렌즈" = 해당 시군구가 부릉 평균(3.70%)까지 프렌즈 비중을 끌어올릴 경우 추가 가능한 일평균 오더 수
+    </div>
+  </div>
+
+  <!-- 프렌즈 퀄리티 이슈 지역 / 라이더 -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      ⚠️ 프렌즈 퀄리티 이슈 지역 Top 5
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ 마지막 일자: <span id="qualityDate1" style="color:#2E75B6;font-weight:600"></span> 기준 ・ SLA 40분(CREATED_AT→DELIVERED_AT) ・ 일 30건+ 시군구
+      </span>
+    </h2>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:14px">
+      마지막 데이터 반영일 기준 프렌즈 SLA 달성율이 가장 낮은 시군구
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th class="center">순위</th>
+          <th>시군구</th>
+          <th class="num">프렌즈 완료</th>
+          <th class="num">SLA 달성</th>
+          <th class="num">SLA 미달</th>
+          <th class="center">SLA 달성율</th>
+        </tr>
+      </thead>
+      <tbody id="qualityIssueRegionTable"></tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-1-1">
+    <div class="card">
+      <h2 style="color:#047857">
+        🏆 우수 프렌즈 라이더 Top 5
+        <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+          ・ 마지막 일자: <span class="qualityDate" style="color:#2E75B6;font-weight:600"></span> 기준
+        </span>
+      </h2>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px">
+        마지막 데이터 반영일 기준 가장 많은 오더를 수행한 프렌즈
+      </div>
+      <div class="toplist" id="topAgentList"></div>
+    </div>
+    <div class="card">
+      <h2 style="color:#b91c1c">
+        🚨 퀄리티 이슈 프렌즈 Top 5
+        <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+          ・ 마지막 일자: <span class="qualityDate" style="color:#2E75B6;font-weight:600"></span> 기준
+        </span>
+      </h2>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px">
+        마지막 데이터 반영일 기준 SLA 달성율이 가장 낮은 프렌즈 (5건+ 수행자)
+      </div>
+      <div class="toplist" id="worstAgentList"></div>
+    </div>
+  </div>
+
+  <!-- 요기요OD 지역별 SLA -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      요기요OD 지역별 SLA
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ 마지막 일자: <span class="qualityDate" style="color:#2E75B6;font-weight:600"></span> 기준 ・ FRANCHISE_NAME = 요기요OD ・ 14개 주요 시도
+      </span>
+    </h2>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:14px">
+      ORIGIN_SI_DO 기준 / 2륜 = 부릉프렌즈 외 라이더 (지점 풀타임·파트타임) / SLA = CREATED_AT → DELIVERED_AT 40분 이내 완료율
+    </div>
+    <div style="overflow-x:auto">
+      <table style="border-collapse:collapse;width:100%">
+        <thead>
+          <tr>
+            <th>지역</th>
+            <th class="num">총 완료 오더</th>
+            <th class="num">2륜 완료</th>
+            <th class="num">프렌즈 완료</th>
+            <th class="center">프렌즈 비중(%)</th>
+            <th class="center">SLA</th>
+            <th class="center">2륜 SLA</th>
+            <th class="center">프렌즈 SLA</th>
+          </tr>
+        </thead>
+        <tbody id="yogiyoRegionTable"></tbody>
+        <tfoot id="yogiyoRegionTableFoot"></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>주요 인사이트 및 유의사항</h2>
+    <div class="notes">
+      <strong>📌 분석 요약</strong>
+      <ul>
+        <li><strong>5/11~5/13 평일 수요 안정화 진행</strong>: 5/11(월) 142,591 → 5/12(화) 139,121 → 5/13(수) 140,592. 평일 약 14만대로 수렴하는 양상이나 정상치(약 18~20만) 대비 -25~30% 수준으로 회복 지연.</li>
+        <li><strong>지점 비중 96.26% / 프렌즈 비중 3.74%</strong>: 13일간 안정적 유지. 후반 들어 프렌즈 비중이 소폭 상승(3.69% → 3.74%).</li>
+        <li><strong>NVP B zone (5/13) SLA 전반 개선</strong>: B_중랑 94.43%, B_원미 88.16%, B_성북 83.50%(67.47% → 83.50% 큰 폭 회복), B_동대문 87.04%.</li>
+        <li><strong>지점 코드 재편 의심 페어 추가</strong>: 기존 페어(인천부평산곡·대구칠곡B 등) 외에 "천안E안서지점", "강북미아지점", "대구평리지점", "대전관저지점" 도 후반 0건 — 운영팀 확인 권고.</li>
+        <li><strong>경기 수원시 장안구</strong>: 4일 연속 프렌즈 SLA 이슈 1위 (5/13 26.19%) — 권역 환경 점검 필요.</li>
+        <li><strong>완료 오더 기준</strong>: 본 대시보드는 ORDER_STATUS = 배달완료 건만 집계 (취소 48,292건 제외).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    데이터 출처: 오더/배송 raw (Snowflake) ・ 일자별 분할 파일 자동 병합 ・ Ver.18 (5/28 추가)<br>
+    파일이 폴더에 추가될 때마다 동일한 형식으로 갱신 가능합니다.
+  </div>
+
+</div>
+
+<script>
+// === Data ===
+const dailyData = [
+  { date: "5/1 (금)",  orders: 204793, prev: null,   pct: null  },
+  { date: "5/2 (토)",  orders: 194566, prev: -10227, pct: -4.99 },
+  { date: "5/3 (일)",  orders: 215364, prev:  20798, pct: 10.69 },
+  { date: "5/4 (월)",  orders: 170639, prev: -44725, pct: -20.77},
+  { date: "5/5 (화)",  orders: 204187, prev:  33548, pct: 19.66 },
+  { date: "5/6 (수)",  orders: 138657, prev: -65530, pct: -32.09},
+  { date: "5/7 (목)",  orders: 150365, prev:  11708, pct: 8.44  },
+  { date: "5/8 (금)",  orders: 182182, prev:  31817, pct: 21.16 },
+  { date: "5/9 (토)",  orders: 192847, prev:  10665, pct: 5.85  },
+  { date: "5/10 (일)", orders: 199416, prev:   6569, pct: 3.41  },
+  { date: "5/11 (월)", orders: 142591, prev: -56825, pct: -28.50},
+  { date: "5/12 (화)", orders: 139121, prev:  -3470, pct: -2.43 },
+  { date: "5/13 (수)", orders: 140592, prev:   1471, pct:  1.06 },
+  { date: "5/14 (목)", orders: 144453, prev:   3861, pct:  2.75 },
+  { date: "5/15 (금)", orders: 175076, prev:  30623, pct: 21.20 },
+  { date: "5/16 (토)", orders: 207258, prev:  32182, pct: 18.38 },
+  { date: "5/17 (일)", orders: 209519, prev:   2261, pct:  1.09 },
+  { date: "5/18 (월)", orders: 139282, prev: -70237, pct: -33.52 },
+  { date: "5/19 (화)", orders: 143057, prev:   3775, pct:  2.71 },
+  { date: "5/20 (수)", orders: 182258, prev:  39201, pct: 27.40 },
+  { date: "5/21 (목)", orders: 160023, prev: -22235, pct: -12.20 },
+  { date: "5/22 (금)", orders: 177601, prev:  17578, pct: 10.98 },
+  { date: "5/23 (토)", orders: 197575, prev:  19974, pct: 11.25 },
+  { date: "5/24 (일)", orders: 196320, prev:  -1255, pct: -0.64 },
+  { date: "5/25 (월)", orders: 200650, prev:   4330, pct:  2.21 },
+  { date: "5/26 (화)", orders: 148479, prev: -52171, pct: -26.00 },
+  { date: "5/27 (수)", orders: 152323, prev:   3844, pct:  2.59 },
+  { date: "5/28 (목)", orders: 142929, prev:  -9394, pct: -6.17 },
+];
+
+const typeData = [
+  { date: "5/1",  branch: 196665, friends: 8128 },
+  { date: "5/2",  branch: 186596, friends: 7970 },
+  { date: "5/3",  branch: 209089, friends: 6275 },
+  { date: "5/4",  branch: 164306, friends: 6333 },
+  { date: "5/5",  branch: 196678, friends: 7509 },
+  { date: "5/6",  branch: 132704, friends: 5953 },
+  { date: "5/7",  branch: 144810, friends: 5555 },
+  { date: "5/8",  branch: 175622, friends: 6560 },
+  { date: "5/9",  branch: 186104, friends: 6743 },
+  { date: "5/10", branch: 191839, friends: 7577 },
+  { date: "5/11", branch: 137617, friends: 4974 },
+  { date: "5/12", branch: 133652, friends: 5469 },
+  { date: "5/13", branch: 134504, friends: 6088 },
+  { date: "5/14", branch: 138226, friends: 6227 },
+  { date: "5/15", branch: 167790, friends: 7286 },
+  { date: "5/16", branch: 199786, friends: 7472 },
+  { date: "5/17", branch: 202032, friends: 7487 },
+  { date: "5/18", branch: 133315, friends: 5967 },
+  { date: "5/19", branch: 137148, friends: 5909 },
+  { date: "5/20", branch: 178226, friends: 4032 },
+  { date: "5/21", branch: 154854, friends: 5169 },
+  { date: "5/22", branch: 171745, friends: 5856 },
+  { date: "5/23", branch: 191400, friends: 6175 },
+  { date: "5/24", branch: 189714, friends: 6606 },
+  { date: "5/25", branch: 193745, friends: 6905 },
+  { date: "5/26", branch: 143940, friends: 4539 },
+  { date: "5/27", branch: 146982, friends: 5341 },
+  { date: "5/28", branch: 137323, friends: 5606 },
+];
+
+const surgeData = [
+  { rank: 1, name: "대구칠곡P지점", early: 138, late: 411, change: 273, pct: 197.83 },
+  { rank: 2, name: "동대문장안지점", early: 212, late: 400, change: 188, pct:  88.44 },
+  { rank: 3, name: "부산금샘2지점", early: 170, late: 220, change:  50, pct:  29.41 },
+  { rank: 4, name: "부산금정G지점", early: 248, late: 314, change:  66, pct:  26.36 },
+  { rank: 5, name: "서초중앙2지점", early: 104, late: 128, change:  24, pct:  23.67 },
+];
+
+const declineData = [
+  { rank: 1, name: "대구칠곡B지점",   early: 348, late: 0, change: -348, pct: -100.00 },
+  { rank: 2, name: "양산사송지점",     early: 615, late: 0, change: -615, pct: -100.00 },
+  { rank: 3, name: "고양성사지점",     early: 101, late: 0, change: -101, pct: -100.00 },
+  { rank: 4, name: "인천부평산곡지점", early: 336, late: 0, change: -336, pct: -100.00 },
+  { rank: 5, name: "포항두호지점",     early: 118, late: 0, change: -118, pct: -100.00 },
+];
+
+// === Helpers ===
+const fmt = n => n == null ? "-" : n.toLocaleString();
+const fmtPct = (n, sign=true) => {
+  if (n == null) return "-";
+  const s = sign && n > 0 ? "+" : "";
+  return s + n.toFixed(2) + "%";
+};
+
+// === Daily detail table (horizontal layout) ===
+const dailyTable = document.getElementById("dailyTable");
+// Row 1: 일자
+let rowHeaders = '<tr><th style="background:#f3f4f6;color:#374151;font-weight:700;padding:8px 10px;font-size:11px;border:1px solid #e5e7eb;white-space:nowrap">일자</th>';
+let rowOrders  = '<tr><th style="background:#f3f4f6;color:#374151;font-weight:700;padding:8px 10px;font-size:11px;border:1px solid #e5e7eb;white-space:nowrap">완료 오더</th>';
+let rowPct     = '<tr><th style="background:#f3f4f6;color:#374151;font-weight:700;padding:8px 10px;font-size:11px;border:1px solid #e5e7eb;white-space:nowrap">전일 대비</th>';
+dailyData.forEach(d => {
+  rowHeaders += `<td style="text-align:center;padding:8px 10px;font-weight:600;font-size:12px;border:1px solid #e5e7eb;white-space:nowrap">${d.date}</td>`;
+  rowOrders += `<td style="text-align:right;padding:8px 10px;font-size:12px;border:1px solid #e5e7eb;white-space:nowrap;font-variant-numeric:tabular-nums">${fmt(d.orders)}</td>`;
+  if (d.pct == null) {
+    rowPct += `<td style="text-align:center;padding:8px 10px;font-size:12px;border:1px solid #e5e7eb;color:#9ca3af">-</td>`;
+  } else {
+    const color = d.pct >= 0 ? '#047857' : '#b91c1c';
+    const sign = d.pct > 0 ? '+' : '';
+    rowPct += `<td style="text-align:center;padding:8px 10px;font-size:12px;border:1px solid #e5e7eb;color:${color};font-weight:700;white-space:nowrap">${sign}${d.pct.toFixed(2)}%</td>`;
+  }
+});
+rowHeaders += '</tr>';
+rowOrders += '</tr>';
+rowPct += '</tr>';
+dailyTable.innerHTML = rowHeaders + rowOrders + rowPct;
+
+// === Trend Chart ===
+const dataLabelsPlugin = {
+  id: "dataLabels",
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((point, index) => {
+        const value = dataset.data[index];
+        ctx.save();
+        ctx.font = "bold 13px -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        const text = value.toLocaleString();
+        const x = point.x;
+        const y = point.y - 14;
+        // Draw a white background pill for readability
+        const padding = 6;
+        const textWidth = ctx.measureText(text).width;
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.strokeStyle = "#2E75B6";
+        ctx.lineWidth = 1.5;
+        const w = textWidth + padding * 2;
+        const h = 20;
+        const rx = x - w / 2;
+        const ry = y - h + 2;
+        const r = 4;
+        ctx.beginPath();
+        ctx.moveTo(rx + r, ry);
+        ctx.lineTo(rx + w - r, ry);
+        ctx.quadraticCurveTo(rx + w, ry, rx + w, ry + r);
+        ctx.lineTo(rx + w, ry + h - r);
+        ctx.quadraticCurveTo(rx + w, ry + h, rx + w - r, ry + h);
+        ctx.lineTo(rx + r, ry + h);
+        ctx.quadraticCurveTo(rx, ry + h, rx, ry + h - r);
+        ctx.lineTo(rx, ry + r);
+        ctx.quadraticCurveTo(rx, ry, rx + r, ry);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Draw the number
+        ctx.fillStyle = "#1d4f80";
+        ctx.fillText(text, x, y - 4);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+new Chart(document.getElementById("trendChart"), {
+  type: "line",
+  data: {
+    labels: dailyData.map(d => d.date),
+    datasets: [{
+      label: "완료 오더",
+      data: dailyData.map(d => d.orders),
+      borderColor: "#2E75B6",
+      backgroundColor: "rgba(46,117,182,0.1)",
+      borderWidth: 3,
+      tension: 0.3,
+      fill: true,
+      pointRadius: 6,
+      pointHoverRadius: 9,
+      pointBackgroundColor: "#2E75B6",
+      pointBorderColor: "white",
+      pointBorderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: false,
+    layout: { padding: { top: 30, right: 20, bottom: 0, left: 10 } },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => "완료 오더: " + ctx.parsed.y.toLocaleString() + "건"
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        ticks: { callback: v => v.toLocaleString() }
+      }
+    }
+  },
+  plugins: [dataLabelsPlugin]
+});
+
+// === Type Table (replaces Type Stack Chart) ===
+const typeTable = document.getElementById("typeTable");
+const typeTableFoot = document.getElementById("typeTableFoot");
+let totBranch = 0, totFriends = 0;
+typeData.forEach(d => {
+  const total = d.branch + d.friends;
+  const branchPct = (d.branch / total * 100).toFixed(2);
+  const friendsPct = (d.friends / total * 100).toFixed(2);
+  totBranch += d.branch;
+  totFriends += d.friends;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${d.date}</td>
+    <td class="num">${fmt(d.branch)}</td>
+    <td class="num">${fmt(d.friends)}</td>
+    <td class="num">${fmt(total)}</td>
+    <td class="center" style="color:#2E75B6;font-weight:600">${branchPct}%</td>
+    <td class="center" style="color:#ED7D31;font-weight:600">${friendsPct}%</td>
+  `;
+  typeTable.appendChild(tr);
+});
+const totAll = totBranch + totFriends;
+typeTableFoot.innerHTML = `
+  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #2E75B6">
+    <td style="padding:10px 12px">합계</td>
+    <td class="num" style="padding:10px 12px">${fmt(totBranch)}</td>
+    <td class="num" style="padding:10px 12px">${fmt(totFriends)}</td>
+    <td class="num" style="padding:10px 12px">${fmt(totAll)}</td>
+    <td class="center" style="padding:10px 12px;color:#2E75B6">${(totBranch/totAll*100).toFixed(2)}%</td>
+    <td class="center" style="padding:10px 12px;color:#ED7D31">${(totFriends/totAll*100).toFixed(2)}%</td>
+  </tr>
+`;
+
+// === NVP B Zone 현황 (마지막 일자 기준) ===
+const nvpZoneData = {
+  date: "2026.5.28",
+  zones: [
+    { zone: "B_중랑",   codes: ["p1008A","p1097B"], branch: 144, friends: 559, total: 703, oy_excluded: 17, sla_within: 623, sla_total: 686, sla_rate: 90.82 },
+    { zone: "B_원미",   codes: ["p1292B","p1255B"], branch: 111, friends: 475, total: 586, oy_excluded: 31, sla_within: 495, sla_total: 555, sla_rate: 89.19 },
+    { zone: "B_성북",   codes: ["p943A"],            branch:  64, friends:  35, total:  99, oy_excluded: 12, sla_within:  76, sla_total:  87, sla_rate: 87.36 },
+    { zone: "B_동대문", codes: ["p1054A"],            branch: 158, friends: 114, total: 272, oy_excluded: 33, sla_within: 202, sla_total: 239, sla_rate: 84.52 },
+    { zone: "B_해운대", codes: ["p167C"],              branch: 180, friends:  84, total: 264, oy_excluded: 62, sla_within: 165, sla_total: 202, sla_rate: 81.68 }
+  ]
+};
+
+document.getElementById("nvpDate").textContent = nvpZoneData.date;
+
+// SLA color coding
+function slaColor(rate) {
+  if (rate >= 90) return { bg: "#d1fae5", color: "#065f46", border: "#10b981" };
+  if (rate >= 80) return { bg: "#fef3c7", color: "#92400e", border: "#f59e0b" };
+  return { bg: "#fee2e2", color: "#991b1b", border: "#ef4444" };
+}
+
+// Mini-cards per zone
+const nvpZoneCards = document.getElementById("nvpZoneCards");
+nvpZoneData.zones.forEach(z => {
+  const c = slaColor(z.sla_rate);
+  const card = document.createElement("div");
+  card.style.cssText = `background:#f9fafb;border-radius:10px;padding:16px;border-left:4px solid ${c.border}`;
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#111827">${z.zone}</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:2px">${z.codes.join(", ")}</div>
+      </div>
+      <div style="background:${c.bg};color:${c.color};padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap">
+        SLA ${z.sla_rate.toFixed(2)}%
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+      <div>
+        <div style="color:#6b7280">지점 완료</div>
+        <div style="font-size:18px;font-weight:700;color:#2E75B6">${fmt(z.branch)}</div>
+      </div>
+      <div>
+        <div style="color:#6b7280">프렌즈 완료</div>
+        <div style="font-size:18px;font-weight:700;color:#ED7D31">${fmt(z.friends)}</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;padding:6px 10px;background:#eef2ff;border-radius:6px;font-size:12px;display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#4338ca;font-weight:500">프렌즈 비율 (전체 중)</span>
+      <span style="font-size:14px;font-weight:700;color:#3730a3">${(z.friends/z.total*100).toFixed(2)}%</span>
+    </div>
+    <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb;font-size:11px;color:#6b7280">
+      합계 <strong style="color:#111827">${fmt(z.total)}</strong>건  ・  SLA 달성 ${fmt(z.sla_within)}/${fmt(z.sla_total)}
+      <br><span style="color:#92400e">올리브영 제외 ${fmt(z.oy_excluded)}건</span>
+    </div>
+  `;
+  nvpZoneCards.appendChild(card);
+});
+
+// === Top 5 lists ===
+function renderTopList(elId, data, isDecline=false) {
+  const el = document.getElementById(elId);
+  data.forEach(d => {
+    const item = document.createElement("div");
+    item.className = "toplist-item" + (isDecline ? " decline-item" : "");
+    const pctCls = isDecline ? "down" : "up";
+    const sign = d.pct > 0 ? "+" : "";
+    item.innerHTML = `
+      <div class="rank">${d.rank}</div>
+      <div style="flex:1">
+        <div class="name">${d.name}</div>
+        <div class="detail">${fmt(d.early)} → ${fmt(d.late)}건  ・  증감 ${sign}${fmt(d.change)}건</div>
+      </div>
+      <div class="pct ${pctCls}">${sign}${d.pct.toFixed(2)}%</div>
+    `;
+    el.appendChild(item);
+  });
+}
+renderTopList("surgeList", surgeData, false);
+renderTopList("declineList", declineData, true);
+
+// === 프렌즈 시군구 급등/급락 Top 5 ===
+const friendsSurgeData = [
+  { rank: 1, name: "부산광역시 해운대구", early:  72, late:  90, change:  18, pct: 24.83 },
+  { rank: 2, name: "광주광역시 광산구",   early:  58, late:  62, change:   4, pct:  6.90 },
+  { rank: 3, name: "서울특별시 동대문구", early: 174, late: 179, change:   5, pct:  3.17 },
+  { rank: 4, name: "서울특별시 강남구",   early: 522, late: 490, change: -32, pct: -6.12 },
+  { rank: 5, name: "서울특별시 금천구",   early:  67, late:  62, change:  -5, pct: -6.72 },
+];
+
+const friendsDeclineData = [
+  { rank: 1, name: "인천광역시 남동구",     early:  78, late: 14, change: -64, pct: -82.58 },
+  { rank: 2, name: "경기도 안양시 동안구", early:  76, late: 20, change: -56, pct: -73.68 },
+  { rank: 3, name: "인천광역시 부평구",     early: 118, late: 32, change: -86, pct: -72.77 },
+  { rank: 4, name: "경기도 부천시 소사구", early:  68, late: 21, change: -47, pct: -68.89 },
+  { rank: 5, name: "서울특별시 노원구",     early:  86, late: 27, change: -59, pct: -68.79 },
+];
+
+renderTopList("friendsSurgeList", friendsSurgeData, false);
+renderTopList("friendsDeclineList", friendsDeclineData, true);
+
+// === 요기요 아침시간 (09:00~10:00) 트래킹 ===
+const yogiyoMorningData = [
+  { date: "5/1 (금)",  branch: 200, friends: 45, cancel:  5, total: 250 },
+  { date: "5/2 (토)",  branch: 141, friends: 44, cancel:  7, total: 192 },
+  { date: "5/3 (일)",  branch: 220, friends: 31, cancel: 10, total: 261 },
+  { date: "5/4 (월)",  branch: 105, friends: 43, cancel:  1, total: 149 },
+  { date: "5/5 (화)",  branch: 143, friends: 54, cancel:  3, total: 200 },
+  { date: "5/6 (수)",  branch:  99, friends: 20, cancel:  1, total: 120 },
+  { date: "5/7 (목)",  branch:  85, friends: 29, cancel:  1, total: 115 },
+  { date: "5/8 (금)",  branch: 122, friends: 36, cancel:  4, total: 162 },
+  { date: "5/9 (토)",  branch: 131, friends: 48, cancel:  6, total: 185 },
+  { date: "5/10 (일)", branch: 172, friends: 45, cancel:  9, total: 226 },
+  { date: "5/11 (월)", branch: 120, friends: 24, cancel:  1, total: 145 },
+  { date: "5/12 (화)", branch: 113, friends: 38, cancel:  3, total: 154 },
+  { date: "5/13 (수)", branch:  89, friends: 52, cancel:  5, total: 146 },
+  { date: "5/14 (목)", branch:  99, friends: 33, cancel:  1, total: 133 },
+  { date: "5/15 (금)", branch: 136, friends: 44, cancel:  1, total: 181 },
+  { date: "5/16 (토)", branch: 214, friends: 82, cancel:  9, total: 305 },
+  { date: "5/17 (일)", branch: 193, friends: 61, cancel:  8, total: 262 },
+  { date: "5/18 (월)", branch: 108, friends: 44, cancel:  0, total: 152 },
+  { date: "5/19 (화)", branch: 101, friends: 46, cancel:  3, total: 150 },
+  { date: "5/20 (수)", branch: 106, friends: 24, cancel:  6, total: 136 },
+  { date: "5/21 (목)", branch: 123, friends: 22, cancel:  1, total: 146 },
+  { date: "5/22 (금)", branch: 121, friends: 35, cancel:  5, total: 161 },
+  { date: "5/23 (토)", branch: 177, friends: 45, cancel:  7, total: 229 },
+  { date: "5/24 (일)", branch: 205, friends: 61, cancel:  3, total: 269 },
+  { date: "5/25 (월)", branch: 188, friends: 57, cancel:  4, total: 249 },
+  { date: "5/26 (화)", branch: 104, friends: 32, cancel:  2, total: 138 },
+  { date: "5/27 (수)", branch: 110, friends: 31, cancel:  0, total: 141 },
+  { date: "5/28 (목)", branch: 138, friends: 30, cancel:  2, total: 170 },
+];
+
+const ymBody = document.getElementById("yogiyoMorningTable");
+let ymTotBranch = 0, ymTotFriends = 0, ymTotCancel = 0, ymTotAll = 0;
+yogiyoMorningData.forEach(d => {
+  ymTotBranch += d.branch;
+  ymTotFriends += d.friends;
+  ymTotCancel += d.cancel;
+  ymTotAll += d.total;
+  const cancelRate = d.total > 0 ? (d.cancel / d.total * 100) : 0;
+  // Color cancel rate: >5% red, 3-5% orange, <3% green
+  let cancelColor = "#065f46", cancelBg = "#d1fae5";
+  if (cancelRate >= 5) { cancelColor = "#991b1b"; cancelBg = "#fee2e2"; }
+  else if (cancelRate >= 3) { cancelColor = "#92400e"; cancelBg = "#fef3c7"; }
+  // Performance ratios (지점 vs 프렌즈, excluding cancel)
+  const completed = d.branch + d.friends;
+  const branchPerf = completed > 0 ? (d.branch / completed * 100) : 0;
+  const friendsPerf = completed > 0 ? (d.friends / completed * 100) : 0;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${d.date}</td>
+    <td class="num"><strong>${fmt(d.total)}</strong></td>
+    <td class="num" style="color:#2E75B6;font-weight:600">${fmt(d.branch)}</td>
+    <td class="num" style="color:#ED7D31;font-weight:600">${fmt(d.friends)}</td>
+    <td class="num" style="color:#b91c1c">${fmt(d.cancel)}</td>
+    <td class="num"><strong style="color:#047857">${fmt(completed)}</strong></td>
+    <td class="center"><span style="background:${cancelBg};color:${cancelColor};padding:3px 8px;border-radius:5px;font-weight:700">${cancelRate.toFixed(2)}%</span></td>
+    <td class="center"><span style="background:#dbeafe;color:#1e3a8a;padding:3px 8px;border-radius:5px;font-weight:700">${branchPerf.toFixed(2)}%</span></td>
+    <td class="center"><span style="background:#fed7aa;color:#9a3412;padding:3px 8px;border-radius:5px;font-weight:700">${friendsPerf.toFixed(2)}%</span></td>
+  `;
+  ymBody.appendChild(tr);
+});
+const ymCancelRateTot = ymTotAll > 0 ? (ymTotCancel / ymTotAll * 100) : 0;
+let ymCC = "#065f46", ymCB = "#d1fae5";
+if (ymCancelRateTot >= 5) { ymCC = "#991b1b"; ymCB = "#fee2e2"; }
+else if (ymCancelRateTot >= 3) { ymCC = "#92400e"; ymCB = "#fef3c7"; }
+const ymCompletedTot = ymTotBranch + ymTotFriends;
+const ymBranchPerfTot = ymCompletedTot > 0 ? (ymTotBranch / ymCompletedTot * 100) : 0;
+const ymFriendsPerfTot = ymCompletedTot > 0 ? (ymTotFriends / ymCompletedTot * 100) : 0;
+document.getElementById("yogiyoMorningTableFoot").innerHTML = `
+  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #2E75B6">
+    <td style="padding:10px 12px">합계</td>
+    <td class="num" style="padding:10px 12px">${fmt(ymTotAll)}</td>
+    <td class="num" style="padding:10px 12px;color:#2E75B6">${fmt(ymTotBranch)}</td>
+    <td class="num" style="padding:10px 12px;color:#ED7D31">${fmt(ymTotFriends)}</td>
+    <td class="num" style="padding:10px 12px;color:#b91c1c">${fmt(ymTotCancel)}</td>
+    <td class="num" style="padding:10px 12px;color:#047857">${fmt(ymCompletedTot)}</td>
+    <td class="center" style="padding:10px 12px"><span style="background:${ymCB};color:${ymCC};padding:3px 8px;border-radius:5px;font-weight:700">${ymCancelRateTot.toFixed(2)}%</span></td>
+    <td class="center" style="padding:10px 12px"><span style="background:#dbeafe;color:#1e3a8a;padding:3px 8px;border-radius:5px;font-weight:700">${ymBranchPerfTot.toFixed(2)}%</span></td>
+    <td class="center" style="padding:10px 12px"><span style="background:#fed7aa;color:#9a3412;padding:3px 8px;border-radius:5px;font-weight:700">${ymFriendsPerfTot.toFixed(2)}%</span></td>
+  </tr>
+`;
+
+// === 스타벅스 아침시간 (08:00~10:00) 트래킹 ===
+const starbucksMorningData = [
+  { date: "5/1 (금)",  total: 1569, branch: 1283, friends: 179, cancel: 107, completed: 1462 },
+  { date: "5/2 (토)",  total: 1441, branch: 1215, friends: 156, cancel:  70, completed: 1371 },
+  { date: "5/3 (일)",  total: 1505, branch: 1281, friends: 102, cancel: 122, completed: 1383 },
+  { date: "5/4 (월)",  total: 1121, branch:  953, friends: 114, cancel:  54, completed: 1067 },
+  { date: "5/5 (화)",  total: 1463, branch: 1189, friends: 194, cancel:  80, completed: 1383 },
+  { date: "5/6 (수)",  total:  824, branch:  697, friends:  98, cancel:  29, completed:  795 },
+  { date: "5/7 (목)",  total:  882, branch:  754, friends: 101, cancel:  27, completed:  855 },
+  { date: "5/8 (금)",  total: 1170, branch:  973, friends: 146, cancel:  51, completed: 1119 },
+  { date: "5/9 (토)",  total: 1713, branch: 1452, friends: 159, cancel: 102, completed: 1611 },
+  { date: "5/10 (일)", total: 1557, branch: 1338, friends: 151, cancel:  68, completed: 1489 },
+  { date: "5/11 (월)", total:  794, branch:  692, friends:  72, cancel:  30, completed:  764 },
+  { date: "5/12 (화)", total:  876, branch:  751, friends:  77, cancel:  48, completed:  828 },
+  { date: "5/13 (수)", total: 1003, branch:  841, friends: 107, cancel:  55, completed:  948 },
+  { date: "5/14 (목)", total: 1022, branch:  862, friends: 126, cancel:  34, completed:  988 },
+  { date: "5/15 (금)", total: 1770, branch: 1505, friends: 199, cancel:  66, completed: 1704 },
+  { date: "5/16 (토)", total: 1873, branch: 1603, friends: 158, cancel: 112, completed: 1761 },
+  { date: "5/17 (일)", total: 1790, branch: 1538, friends: 164, cancel:  88, completed: 1702 },
+  { date: "5/18 (월)", total: 1023, branch:  856, friends: 116, cancel:  51, completed:  972 },
+  { date: "5/19 (화)", total:  927, branch:  758, friends: 116, cancel:  53, completed:  874 },
+  { date: "5/20 (수)", total:  943, branch:  776, friends:  81, cancel:  86, completed:  857 },
+  { date: "5/21 (목)", total:  958, branch:  771, friends: 112, cancel:  75, completed:  883 },
+  { date: "5/22 (금)", total: 1089, branch:  931, friends:  91, cancel:  67, completed: 1022 },
+  { date: "5/23 (토)", total: 1585, branch: 1333, friends: 128, cancel: 124, completed: 1461 },
+  { date: "5/24 (일)", total: 1446, branch: 1236, friends: 117, cancel:  93, completed: 1353 },
+  { date: "5/25 (월)", total: 1471, branch: 1222, friends: 148, cancel: 101, completed: 1370 },
+  { date: "5/26 (화)", total:  772, branch:  664, friends:  60, cancel:  48, completed:  724 },
+  { date: "5/27 (수)", total:  758, branch:  631, friends:  71, cancel:  56, completed:  702 },
+  { date: "5/28 (목)", total:  730, branch:  605, friends:  70, cancel:  55, completed:  675 },
+];
+
+const sbBody = document.getElementById("starbucksMorningTable");
+let sbTotBranch = 0, sbTotFriends = 0, sbTotCancel = 0, sbTotAll = 0, sbCompletedTot = 0;
+starbucksMorningData.forEach(d => {
+  sbTotBranch += d.branch;
+  sbTotFriends += d.friends;
+  sbTotCancel += d.cancel;
+  sbTotAll += d.total;
+  sbCompletedTot += d.completed;
+  const cancelRate = d.total > 0 ? (d.cancel / d.total * 100) : 0;
+  let cancelColor = "#065f46", cancelBg = "#d1fae5";
+  if (cancelRate >= 5) { cancelColor = "#991b1b"; cancelBg = "#fee2e2"; }
+  else if (cancelRate >= 3) { cancelColor = "#92400e"; cancelBg = "#fef3c7"; }
+  const branchPerf = d.completed > 0 ? (d.branch / d.completed * 100) : 0;
+  const friendsPerf = d.completed > 0 ? (d.friends / d.completed * 100) : 0;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${d.date}</td>
+    <td class="num"><strong>${fmt(d.total)}</strong></td>
+    <td class="num" style="color:#2E75B6;font-weight:600">${fmt(d.branch)}</td>
+    <td class="num" style="color:#ED7D31;font-weight:600">${fmt(d.friends)}</td>
+    <td class="num" style="color:#b91c1c">${fmt(d.cancel)}</td>
+    <td class="num"><strong style="color:#047857">${fmt(d.completed)}</strong></td>
+    <td class="center"><span style="background:${cancelBg};color:${cancelColor};padding:3px 8px;border-radius:5px;font-weight:700">${cancelRate.toFixed(2)}%</span></td>
+    <td class="center"><span style="background:#dbeafe;color:#1e3a8a;padding:3px 8px;border-radius:5px;font-weight:700">${branchPerf.toFixed(2)}%</span></td>
+    <td class="center"><span style="background:#fed7aa;color:#9a3412;padding:3px 8px;border-radius:5px;font-weight:700">${friendsPerf.toFixed(2)}%</span></td>
+  `;
+  sbBody.appendChild(tr);
+});
+const sbCancelRateTot = sbTotAll > 0 ? (sbTotCancel / sbTotAll * 100) : 0;
+let sbCC = "#065f46", sbCB = "#d1fae5";
+if (sbCancelRateTot >= 5) { sbCC = "#991b1b"; sbCB = "#fee2e2"; }
+else if (sbCancelRateTot >= 3) { sbCC = "#92400e"; sbCB = "#fef3c7"; }
+const sbBranchPerfTot = sbCompletedTot > 0 ? (sbTotBranch / sbCompletedTot * 100) : 0;
+const sbFriendsPerfTot = sbCompletedTot > 0 ? (sbTotFriends / sbCompletedTot * 100) : 0;
+// === 프렌즈 활성화 추천 지역 ===
+const friendsRecData = [
+  { rank:1,  region:"경기도 남양주시",       daily:5722, friends_pct:0.89, gap:2.81, daily_potential:161 },
+  { rank:2,  region:"부산광역시 금정구",     daily:3428, friends_pct:0.16, gap:3.54, daily_potential:121 },
+  { rank:3,  region:"경기도 오산시",         daily:2769, friends_pct:0.00, gap:3.70, daily_potential:103 },
+  { rank:4,  region:"세종특별자치시",         daily:3657, friends_pct:0.88, gap:2.82, daily_potential:103 },
+  { rank:5,  region:"충청남도 천안시 서북구", daily:4657, friends_pct:1.57, gap:2.13, daily_potential: 99 },
+  { rank:6,  region:"울산광역시 남구",       daily:2784, friends_pct:0.21, gap:3.49, daily_potential: 97 },
+  { rank:7,  region:"서울특별시 마포구",     daily:2765, friends_pct:0.52, gap:3.18, daily_potential: 88 },
+  { rank:8,  region:"전라남도 순천시",       daily:2201, friends_pct:0.00, gap:3.70, daily_potential: 81 },
+  { rank:9,  region:"대구광역시 동구",       daily:2561, friends_pct:0.57, gap:3.13, daily_potential: 80 },
+  { rank:10, region:"부산광역시 동래구",     daily:2661, friends_pct:1.03, gap:2.67, daily_potential: 71 },
+];
+
+const frBody = document.getElementById("friendsRecTable");
+let frTotPotDay = 0;
+friendsRecData.forEach(d => {
+  frTotPotDay += d.daily_potential;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td class="center"><span style="background:#4338ca;color:white;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">${d.rank}</span></td>
+    <td style="font-weight:600">${d.region}</td>
+    <td class="num">${fmt(d.daily)}</td>
+    <td class="center"><span style="color:#b91c1c;font-weight:600">${d.friends_pct.toFixed(2)}%</span></td>
+    <td class="center"><span style="background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:5px;font-weight:700">+${d.gap.toFixed(2)}%p</span></td>
+    <td class="num"><strong style="color:#047857">+${fmt(d.daily_potential)}</strong></td>
+    <td class="num"><strong style="color:#065f46">+${fmt(d.daily_potential*7)}</strong></td>
+  `;
+  frBody.appendChild(tr);
+});
+document.getElementById("friendsRecTableFoot").innerHTML = `
+  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #4338ca">
+    <td class="center" style="padding:10px 12px" colspan="5">Top 10 합산 잠재력</td>
+    <td class="num" style="padding:10px 12px;color:#047857">+${fmt(frTotPotDay)}</td>
+    <td class="num" style="padding:10px 12px;color:#065f46">+${fmt(frTotPotDay*7)}</td>
+  </tr>
+`;
+
+// === 프렌즈 퀄리티 이슈 ===
+const qualityDate = "2026.5.28";
+document.getElementById("qualityDate1").textContent = qualityDate;
+document.querySelectorAll(".qualityDate").forEach(el => el.textContent = qualityDate);
+
+// SLA color helper (for rate)
+function slaColorR(rate) {
+  if (rate >= 90) return { bg: "#d1fae5", color: "#065f46" };
+  if (rate >= 80) return { bg: "#fef3c7", color: "#92400e" };
+  if (rate >= 50) return { bg: "#fed7aa", color: "#9a3412" };
+  return { bg: "#fee2e2", color: "#991b1b" };
+}
+
+// 1. 퀄리티 이슈 지역 Top 5
+const qualityIssueRegions = [
+  { rank: 1, region: "경기도 수원시 영통구", total: 47, within: 19, rate: 40.43 },
+  { rank: 2, region: "부산광역시 부산진구",   total: 34, within: 14, rate: 41.18 },
+  { rank: 3, region: "경기도 수원시 권선구", total: 32, within: 14, rate: 43.75 },
+  { rank: 4, region: "부산광역시 수영구",     total: 44, within: 21, rate: 47.73 },
+  { rank: 5, region: "인천광역시 중구",       total: 37, within: 20, rate: 54.05 },
+];
+const qBody = document.getElementById("qualityIssueRegionTable");
+qualityIssueRegions.forEach(r => {
+  const c = slaColorR(r.rate);
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td class="center"><span style="background:#C00000;color:white;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">${r.rank}</span></td>
+    <td style="font-weight:600">${r.region}</td>
+    <td class="num">${fmt(r.total)}</td>
+    <td class="num" style="color:#047857">${fmt(r.within)}</td>
+    <td class="num" style="color:#b91c1c">${fmt(r.total - r.within)}</td>
+    <td class="center"><span style="background:${c.bg};color:${c.color};padding:3px 8px;border-radius:5px;font-weight:700">${r.rate.toFixed(2)}%</span></td>
+  `;
+  qBody.appendChild(tr);
+});
+
+// 2-1. 우수 프렌즈 라이더 Top 5
+const topAgents = [
+  { rank: 1, name: "프)최장일",    partner: "부릉프렌즈 대전광역시 서구", total: 54, rate: 87.04 },
+  { rank: 2, name: "프)문준성",    partner: "부릉프렌즈 서울특별시",       total: 41, rate: 87.80 },
+  { rank: 3, name: "프)김민우12", partner: "부릉프렌즈 서울특별시",       total: 36, rate: 69.44 },
+  { rank: 4, name: "프)최유상",    partner: "부릉프렌즈 서울특별시",       total: 36, rate: 83.33 },
+  { rank: 5, name: "프)유현우",    partner: "부릉프렌즈 서울특별시",       total: 35, rate: 88.57 },
+];
+const taList = document.getElementById("topAgentList");
+topAgents.forEach(a => {
+  const c = slaColorR(a.rate);
+  const item = document.createElement("div");
+  item.className = "toplist-item";
+  item.innerHTML = `
+    <div class="rank" style="background:#047857">${a.rank}</div>
+    <div style="flex:1">
+      <div class="name">${a.name} <span style="color:#6b7280;font-weight:400;font-size:11px">(${a.partner})</span></div>
+      <div class="detail">완료 오더 ${fmt(a.total)}건 ・ SLA 달성율 <span style="color:${c.color};font-weight:700">${a.rate.toFixed(2)}%</span></div>
+    </div>
+    <div class="pct up" style="background:#dbeafe;color:#1e3a8a">${fmt(a.total)}건</div>
+  `;
+  taList.appendChild(item);
+});
+
+// 2-2. 퀄리티 이슈 프렌즈 Top 5
+const worstAgents = [
+  { rank: 1, name: "프)박진우", partner: "부릉프렌즈 대구광역시 달서구", total:  7, within: 0, rate:  0.00 },
+  { rank: 2, name: "프)박소은", partner: "부릉프렌즈 서울특별시",         total:  6, within: 0, rate:  0.00 },
+  { rank: 3, name: "프)김현철", partner: "부릉프렌즈 경기도 수원시",      total:  7, within: 1, rate: 14.29 },
+  { rank: 4, name: "프)안덕균", partner: "부릉프렌즈 부산광역시",         total:  6, within: 1, rate: 16.67 },
+  { rank: 5, name: "프)양희동", partner: "부릉프렌즈 경기도 수원시",      total: 10, within: 2, rate: 20.00 },
+];
+const waList = document.getElementById("worstAgentList");
+worstAgents.forEach(a => {
+  const item = document.createElement("div");
+  item.className = "toplist-item decline-item";
+  item.innerHTML = `
+    <div class="rank">${a.rank}</div>
+    <div style="flex:1">
+      <div class="name">${a.name} <span style="color:#6b7280;font-weight:400;font-size:11px">(${a.partner})</span></div>
+      <div class="detail">완료 ${fmt(a.total)}건 ・ SLA 달성 ${fmt(a.within)}/${fmt(a.total)}</div>
+    </div>
+    <div class="pct down">${a.rate.toFixed(2)}%</div>
+  `;
+  waList.appendChild(item);
+});
+
+document.getElementById("starbucksMorningTableFoot").innerHTML = `
+  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #2E75B6">
+    <td style="padding:10px 12px">합계</td>
+    <td class="num" style="padding:10px 12px">${fmt(sbTotAll)}</td>
+    <td class="num" style="padding:10px 12px;color:#2E75B6">${fmt(sbTotBranch)}</td>
+    <td class="num" style="padding:10px 12px;color:#ED7D31">${fmt(sbTotFriends)}</td>
+    <td class="num" style="padding:10px 12px;color:#b91c1c">${fmt(sbTotCancel)}</td>
+    <td class="num" style="padding:10px 12px;color:#047857">${fmt(sbCompletedTot)}</td>
+    <td class="center" style="padding:10px 12px"><span style="background:${sbCB};color:${sbCC};padding:3px 8px;border-radius:5px;font-weight:700">${sbCancelRateTot.toFixed(2)}%</span></td>
+    <td class="center" style="padding:10px 12px"><span style="background:#dbeafe;color:#1e3a8a;padding:3px 8px;border-radius:5px;font-weight:700">${sbBranchPerfTot.toFixed(2)}%</span></td>
+    <td class="center" style="padding:10px 12px"><span style="background:#fed7aa;color:#9a3412;padding:3px 8px;border-radius:5px;font-weight:700">${sbFriendsPerfTot.toFixed(2)}%</span></td>
+  </tr>
+`;
+
+// === 요기요OD 지역별 SLA ===
+const yogiyoRegionData = [
+  { region:"서울", total:5852, branch:4196, friends:1656, sla:79.27, branch_sla:77.91, friends_sla:82.73 },
+  { region:"경기", total:7116, branch:6131, friends:985,  sla:80.83, branch_sla:80.49, friends_sla:82.94 },
+  { region:"인천", total:2191, branch:1954, friends:237,  sla:76.36, branch_sla:77.07, friends_sla:70.46 },
+  { region:"대전", total:954,  branch:868,  friends:86,   sla:81.97, branch_sla:82.26, friends_sla:79.07 },
+  { region:"대구", total:1146, branch:953,  friends:193,  sla:85.25, branch_sla:84.99, friends_sla:86.53 },
+  { region:"광주", total:1414, branch:1318, friends:96,   sla:76.45, branch_sla:76.93, friends_sla:69.79 },
+  { region:"부산", total:1492, branch:1326, friends:166,  sla:78.82, branch_sla:78.73, friends_sla:79.52 },
+  { region:"충남", total:793,  branch:707,  friends:86,   sla:86.00, branch_sla:86.42, friends_sla:82.56 },
+  { region:"충북", total:600,  branch:569,  friends:31,   sla:85.83, branch_sla:86.64, friends_sla:70.97 },
+  { region:"전남", total:485,  branch:485,  friends:0,    sla:77.94, branch_sla:77.94, friends_sla:null  },
+  { region:"전북", total:1174, branch:1142, friends:32,   sla:81.94, branch_sla:81.61, friends_sla:93.75 },
+  { region:"경남", total:685,  branch:641,  friends:44,   sla:85.11, branch_sla:85.65, friends_sla:77.27 },
+  { region:"경북", total:788,  branch:767,  friends:21,   sla:88.32, branch_sla:88.40, friends_sla:85.71 },
+  { region:"강원", total:157,  branch:140,  friends:17,   sla:80.25, branch_sla:83.57, friends_sla:52.94 },
+];
+const yrTable = document.getElementById("yogiyoRegionTable");
+let yrTotTotal=0, yrTotBranch=0, yrTotFriends=0;
+function slaBadge(v) {
+  if (v == null) return '<span style="color:#9ca3af">-</span>';
+  let bg = '#d1fae5', fg = '#065f46';
+  if (v < 50) { bg = '#fee2e2'; fg = '#991b1b'; }
+  else if (v < 80) { bg = '#fef3c7'; fg = '#92400e'; }
+  return `<span style="background:${bg};color:${fg};padding:3px 8px;border-radius:5px;font-weight:700">${v.toFixed(2)}%</span>`;
+}
+yogiyoRegionData.forEach(r => {
+  yrTotTotal += r.total; yrTotBranch += r.branch; yrTotFriends += r.friends;
+  const frPct = r.total > 0 ? (r.friends / r.total * 100) : 0;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td style="font-weight:600">${r.region}</td>
+    <td class="num"><strong>${fmt(r.total)}</strong></td>
+    <td class="num" style="color:#2E75B6">${fmt(r.branch)}</td>
+    <td class="num" style="color:#ED7D31">${fmt(r.friends)}</td>
+    <td class="center"><span style="background:#eef2ff;color:#3730a3;padding:3px 8px;border-radius:5px;font-weight:700">${frPct.toFixed(2)}%</span></td>
+    <td class="center">${slaBadge(r.sla)}</td>
+    <td class="center">${slaBadge(r.branch_sla)}</td>
+    <td class="center">${slaBadge(r.friends_sla)}</td>
+  `;
+  yrTable.appendChild(tr);
+});
+const yrTotFrPct = yrTotTotal > 0 ? (yrTotFriends / yrTotTotal * 100) : 0;
+document.getElementById("yogiyoRegionTableFoot").innerHTML = `
+  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #2E75B6">
+    <td style="padding:10px 12px">합계</td>
+    <td class="num" style="padding:10px 12px"><strong>${fmt(yrTotTotal)}</strong></td>
+    <td class="num" style="padding:10px 12px;color:#2E75B6">${fmt(yrTotBranch)}</td>
+    <td class="num" style="padding:10px 12px;color:#ED7D31">${fmt(yrTotFriends)}</td>
+    <td class="center" style="padding:10px 12px"><span style="background:#eef2ff;color:#3730a3;padding:3px 8px;border-radius:5px;font-weight:700">${yrTotFrPct.toFixed(2)}%</span></td>
+    <td class="center" style="padding:10px 12px">${slaBadge(80.58)}</td>
+    <td class="center" style="padding:10px 12px">${slaBadge(80.44)}</td>
+    <td class="center" style="padding:10px 12px">${slaBadge(81.42)}</td>
+  </tr>
+`;
+</script>
+</body>
+</html>
+
+    <td class="center" style="padding:10px 12px">${slaBadge(80.58)}</td>
+    <td class="center" style="padding:10px 12px">${slaBadge(80.44)}</td>
+    <td class="center" style="padding:10px 12px">${slaBadge(81.42)}</td>
+  </tr>
+`;
+</script>
+</body>
+</html>
