@@ -396,6 +396,21 @@ table tbody tr:hover { background: #f9fafb; }
     <div id="nvpZoneCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px"></div>
   </div>
 
+  <!-- NVP B zone 시간대 프로모션 추천 -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>
+      NVP B zone 시간대 프로모션 추천
+      <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
+        ・ 전일자(<span class="nvpHourDate" style="color:#2E75B6;font-weight:600"></span>) 기준 ・ 취소 다발 + SLA 저조 시간대 핀포인트
+      </span>
+    </h2>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:14px">
+      각 zone별 ① 취소 건수 상위 시간대(라이더 부족 직접 시그널), ② SLA 저조 시간대(40분 초과)를 함께 표기 ・ 두 조건이 겹치는 시간대일수록 우선순위 높음
+      <span style="background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:600">올리브영 제외 SLA</span>
+    </div>
+    <div id="nvpPromoCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px"></div>
+  </div>
+
   <!-- 요기요 아침시간 트래킹 -->
   <div class="card" style="margin-bottom:24px">
     <h2>
@@ -616,7 +631,7 @@ table tbody tr:hover { background: #f9fafb; }
   </div>
 
   <div class="footer">
-    데이터 출처: 오더/배송 raw (Snowflake) ・ 일자별 분할 파일 자동 병합 ・ Ver.29 (6/11~6/14 추가)<br>
+    데이터 출처: 오더/배송 raw (Snowflake) ・ 일자별 분할 파일 자동 병합 ・ Ver.30 (NVP B zone 시간대 프로모션 추천)<br>
     파일이 폴더에 추가될 때마다 동일한 형식으로 갱신 가능합니다.
   </div>
 
@@ -1269,6 +1284,81 @@ const yogiyoCancelData = {
         <span style="background:#dc2626;color:white;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700">${z.total}건</span>
       </div>
       ${dongHtml}
+    `;
+    grid.appendChild(card);
+  });
+})();
+
+// === NVP B zone 시간대 프로모션 추천 (전일자 기준) ===
+const nvpPromoData = {
+  date: "2026.6.14",
+  zones: [
+    { zone: "B_중랑", overallSla: 81.78, totalCancel: 25, recs: [
+      { rank: 1, label: "16:00~17:00", cancel: 5, sla: 63.54, note: "SLA 최저 + 취소 최다 — 오후 라이더 공백" },
+      { rank: 2, label: "18:00~19:00", cancel: 1, sla: 69.47, note: "저녁 피크 SLA 저조 (완료 131건)" },
+      { rank: 3, label: "21:00~22:00", cancel: 2, sla: 75.00, note: "야간 SLA 보강" }
+    ]},
+    { zone: "B_원미", overallSla: 78.45, totalCancel: 43, recs: [
+      { rank: 1, label: "14:00~15:00", cancel: 9, sla: 55.74, note: "취소 최다 + SLA 최저 (전일 zone 최악)" },
+      { rank: 2, label: "15:00~16:00", cancel: 9, sla: 56.25, note: "오후 라이더 이탈 구간 연장" },
+      { rank: 3, label: "16:00~17:00", cancel: 4, sla: 58.82, note: "오후 슬럼프 마무리" }
+    ]},
+    { zone: "B_성북", overallSla: 78.31, totalCancel: 13, recs: [
+      { rank: 1, label: "18:00~19:00", cancel: 2, sla: 59.26, note: "저녁 피크 SLA 최저" },
+      { rank: 2, label: "19:00~20:00", cancel: 4, sla: 73.68, note: "취소 최다 (zone 내)" },
+      { rank: 3, label: "20:00~21:00", cancel: 4, sla: 80.00, note: "취소 보전" }
+    ]},
+    { zone: "B_동대문", overallSla: 78.32, totalCancel: 29, recs: [
+      { rank: 1, label: "18:00~19:00", cancel: 4, sla: 56.70, note: "저녁 피크 SLA 최저 (완료 97건)" },
+      { rank: 2, label: "19:00~20:00", cancel: 6, sla: 72.41, note: "취소 최다 (zone 내)" },
+      { rank: 3, label: "14:00~15:00", cancel: 5, sla: 58.14, note: "오후 SLA 저조" }
+    ]},
+    { zone: "B_해운대", overallSla: 69.87, totalCancel: 17, recs: [
+      { rank: 1, label: "21:00~22:00", cancel: 5, sla: 50.00, note: "전 zone·전 시간대 SLA 최저 — 야간 풀 비어있음" },
+      { rank: 2, label: "18:00~19:00", cancel: 4, sla: 53.49, note: "저녁 피크 SLA 매우 낮음" },
+      { rank: 3, label: "11:00~12:00", cancel: 3, sla: 76.92, note: "점심 피크 취소 다수" }
+    ]}
+  ]
+};
+(function renderNvpPromo() {
+  const grid = document.getElementById("nvpPromoCards");
+  if (!grid) return;
+  document.querySelectorAll(".nvpHourDate").forEach(el => el.textContent = nvpPromoData.date);
+  function slaColor(rate) {
+    if (rate >= 80) return { bg: "#d1fae5", color: "#065f46", border: "#10b981" };
+    if (rate >= 70) return { bg: "#fef3c7", color: "#92400e", border: "#f59e0b" };
+    if (rate >= 60) return { bg: "#fed7aa", color: "#9a3412", border: "#fb923c" };
+    return { bg: "#fee2e2", color: "#991b1b", border: "#ef4444" };
+  }
+  nvpPromoData.zones.forEach(z => {
+    const card = document.createElement("div");
+    card.style.cssText = "background:#f9fafb;border-radius:10px;padding:16px;border-left:4px solid #4338ca";
+    let recsHtml = z.recs.map(r => {
+      const c = slaColor(r.sla);
+      return `
+        <div style="background:white;border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:3px solid ${c.border}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="background:#4338ca;color:white;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11px">${r.rank}</span>
+              <span style="font-size:14px;font-weight:700;color:#111827">${r.label}</span>
+            </div>
+            <span style="background:${c.bg};color:${c.color};padding:3px 8px;border-radius:5px;font-size:12px;font-weight:700">SLA ${r.sla.toFixed(2)}%</span>
+          </div>
+          <div style="display:flex;gap:10px;font-size:11px;color:#6b7280;margin-bottom:4px">
+            <span>취소 <strong style="color:#991b1b">${r.cancel}</strong>건</span>
+          </div>
+          <div style="font-size:11px;color:#374151;line-height:1.5">${r.note}</div>
+        </div>
+      `;
+    }).join("");
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid #e5e7eb">
+        <div style="font-size:15px;font-weight:700;color:#111827">${z.zone}</div>
+        <div style="font-size:11px;color:#6b7280">
+          전일 SLA <strong style="color:#111827">${z.overallSla.toFixed(2)}%</strong> ・ 취소 <strong style="color:#991b1b">${z.totalCancel}</strong>건
+        </div>
+      </div>
+      ${recsHtml}
     `;
     grid.appendChild(card);
   });
