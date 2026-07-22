@@ -480,37 +480,23 @@ table tbody tr:hover { background: #f9fafb; }
     </div>
   </div>
 
-  <!-- 프렌즈 활성화 추천 지역 -->
+  <!-- NVP B zone 일별 원가 트렌드 -->
   <div class="card" style="margin-bottom:24px">
     <h2>
-      🎯 프렌즈 활성화 추천 지역 Top 10
+      💰 NVP B zone 일별 평균 원가 트렌드
       <span style="font-size:12px;font-weight:500;color:#6b7280;margin-left:8px">
-        ・ 7일치 누적 데이터 기반 잠재력 분석
+        ・ 7월 1~21일 · 프렌즈 vs 지점(그 외) 비교
       </span>
     </h2>
-    <div style="background:#eef2ff;border-left:4px solid #4338ca;padding:12px 16px;border-radius:8px;font-size:13px;color:#3730a3;margin-bottom:14px">
-      <strong>🔍 분석 기준</strong><br>
-      ① 일평균 1,000건+ 시장 (수요 충분)  ②  현재 프렌즈 비중 &lt; 3.70% (전체 평균 미달)<br>
-      ③ 잠재 일평균 추가 프렌즈 오더 = 일평균 × (3.70% − 현 프렌즈 비중) <br>
-      <strong>벤치마크 성공 사례</strong>: 서울 강남구 29.24%, 서초구 13.67%, 대구 달서구 11.47%, 서울 관악구 10.41%, 경기 김포시 8.98%
+    <div style="background:#fdf2f8;border-left:4px solid #db2777;padding:12px 16px;border-radius:8px;font-size:13px;color:#831843;margin-bottom:14px">
+      <strong>📊 분석 기준</strong><br>
+      ① NVP B zone 5개(B_중랑·B_원미·B_성북·B_동대문·B_해운대) 관제 오더 중 배달완료 건만 집계<br>
+      ② 평균 원가 = COST_TOTAL(₩) 합계 ÷ 완료 건수 · 이상치(0원 미만 · 10만원 초과) 제외<br>
+      ③ 오렌지 = 부릉프렌즈 · 블루 = 지점(그 외 고용유형)
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th class="center">순위</th>
-          <th>시군구</th>
-          <th class="num">일평균 오더</th>
-          <th class="center">현재 프렌즈 비중</th>
-          <th class="center">평균 대비 GAP</th>
-          <th class="num">잠재 일프렌즈</th>
-          <th class="num">잠재 주간(7일)</th>
-        </tr>
-      </thead>
-      <tbody id="friendsRecTable"></tbody>
-      <tfoot id="friendsRecTableFoot"></tfoot>
-    </table>
-    <div style="font-size:11px;color:#9ca3af;margin-top:6px">
-      ※ "잠재 일프렌즈" = 해당 시군구가 부릉 평균(3.70%)까지 프렌즈 비중을 끌어올릴 경우 추가 가능한 일평균 오더 수
+    <div id="bZoneCostGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(560px,1fr));gap:16px"></div>
+    <div style="font-size:11px;color:#9ca3af;margin-top:10px">
+      ※ 원가는 raw 정산 필드로 확정 정산 전 데이터일 수 있으며, 프렌즈는 요기요OD·올리브영 등 화주사 mix 및 인센티브 정책에 따라 변동합니다.
     </div>
   </div>
 
@@ -1094,32 +1080,223 @@ if (sbCancelRateTot >= 5) { sbCC = "#991b1b"; sbCB = "#fee2e2"; }
 else if (sbCancelRateTot >= 3) { sbCC = "#92400e"; sbCB = "#fef3c7"; }
 const sbBranchPerfTot = sbCompletedTot > 0 ? (sbTotBranch / sbCompletedTot * 100) : 0;
 const sbFriendsPerfTot = sbCompletedTot > 0 ? (sbTotFriends / sbCompletedTot * 100) : 0;
-// === 프렌즈 활성화 추천 지역 ===
-const friendsRecData = [];
+// === NVP B zone 일별 평균 원가 트렌드 ===
+const bZoneCostData = {
+  "B_중랑": [
+    { date: "7/1", fr_n: 505, fr_avg: 5026, br_n: 153, br_avg: 3985 },
+    { date: "7/2", fr_n: 533, fr_avg: 5129, br_n: 146, br_avg: 4201 },
+    { date: "7/3", fr_n: 585, fr_avg: 4944, br_n: 175, br_avg: 4003 },
+    { date: "7/4", fr_n: 759, fr_avg: 4998, br_n: 182, br_avg: 3768 },
+    { date: "7/5", fr_n: 869, fr_avg: 6621, br_n: 180, br_avg: 3961 },
+    { date: "7/6", fr_n: 471, fr_avg: 5222, br_n: 107, br_avg: 3889 },
+    { date: "7/7", fr_n: 476, fr_avg: 4868, br_n:  86, br_avg: 3392 },
+    { date: "7/8", fr_n: 546, fr_avg: 4922, br_n: 123, br_avg: 3775 },
+    { date: "7/9", fr_n: 493, fr_avg: 5437, br_n:  91, br_avg: 4241 },
+    { date: "7/10", fr_n: 574, fr_avg: 5194, br_n: 187, br_avg: 4240 },
+    { date: "7/11", fr_n: 738, fr_avg: 5185, br_n: 220, br_avg: 4023 },
+    { date: "7/12", fr_n: 804, fr_avg: 5467, br_n: 176, br_avg: 3802 },
+    { date: "7/13", fr_n: 509, fr_avg: 4845, br_n: 112, br_avg: 3814 },
+    { date: "7/14", fr_n: 524, fr_avg: 5735, br_n: 102, br_avg: 3999 },
+    { date: "7/15", fr_n: 551, fr_avg: 5357, br_n: 139, br_avg: 4002 },
+    { date: "7/16", fr_n: 516, fr_avg: 4968, br_n: 158, br_avg: 4174 },
+    { date: "7/17", fr_n: 746, fr_avg: 5192, br_n: 225, br_avg: 3960 },
+    { date: "7/18", fr_n: 631, fr_avg: 5048, br_n: 296, br_avg: 4143 },
+    { date: "7/19", fr_n: 679, fr_avg: 4835, br_n: 288, br_avg: 3869 },
+    { date: "7/20", fr_n: 429, fr_avg: 5153, br_n: 175, br_avg: 3955 },
+    { date: "7/21", fr_n: 466, fr_avg: 5450, br_n: 191, br_avg: 4310 },
+  ],
+  "B_원미": [
+    { date: "7/1", fr_n: 538, fr_avg: 4699, br_n:  98, br_avg: 3624 },
+    { date: "7/2", fr_n: 493, fr_avg: 4180, br_n: 130, br_avg: 3636 },
+    { date: "7/3", fr_n: 567, fr_avg: 4227, br_n:  99, br_avg: 3533 },
+    { date: "7/4", fr_n: 765, fr_avg: 4286, br_n: 150, br_avg: 3621 },
+    { date: "7/5", fr_n: 656, fr_avg: 4642, br_n: 124, br_avg: 3939 },
+    { date: "7/6", fr_n: 424, fr_avg: 4508, br_n: 119, br_avg: 3824 },
+    { date: "7/7", fr_n: 482, fr_avg: 4313, br_n: 102, br_avg: 3652 },
+    { date: "7/8", fr_n: 422, fr_avg: 4604, br_n: 122, br_avg: 3634 },
+    { date: "7/9", fr_n: 397, fr_avg: 4685, br_n:  82, br_avg: 3919 },
+    { date: "7/10", fr_n: 463, fr_avg: 4534, br_n:  94, br_avg: 4120 },
+    { date: "7/11", fr_n: 641, fr_avg: 4176, br_n: 150, br_avg: 3601 },
+    { date: "7/12", fr_n: 602, fr_avg: 5916, br_n: 173, br_avg: 4878 },
+    { date: "7/13", fr_n: 383, fr_avg: 4661, br_n:  90, br_avg: 4016 },
+    { date: "7/14", fr_n: 332, fr_avg: 4646, br_n: 107, br_avg: 4022 },
+    { date: "7/15", fr_n: 393, fr_avg: 4488, br_n: 132, br_avg: 3911 },
+    { date: "7/16", fr_n: 420, fr_avg: 4515, br_n:  93, br_avg: 3757 },
+    { date: "7/17", fr_n: 655, fr_avg: 4594, br_n: 127, br_avg: 3658 },
+    { date: "7/18", fr_n: 509, fr_avg: 4682, br_n: 106, br_avg: 3756 },
+    { date: "7/19", fr_n: 687, fr_avg: 4463, br_n:  76, br_avg: 3123 },
+    { date: "7/20", fr_n: 459, fr_avg: 4816, br_n:  48, br_avg: 3180 },
+    { date: "7/21", fr_n: 406, fr_avg: 4618, br_n:  72, br_avg: 3740 },
+  ],
+  "B_성북": [
+    { date: "7/1", fr_n: 42, fr_avg: 4683, br_n: 81, br_avg: 4789 },
+    { date: "7/2", fr_n: 43, fr_avg: 5300, br_n: 90, br_avg: 5782 },
+    { date: "7/3", fr_n: 70, fr_avg: 4864, br_n: 69, br_avg: 5393 },
+    { date: "7/4", fr_n: 81, fr_avg: 5146, br_n: 88, br_avg: 5247 },
+    { date: "7/5", fr_n: 85, fr_avg: 5758, br_n: 86, br_avg: 5438 },
+    { date: "7/6", fr_n: 20, fr_avg: 5518, br_n: 81, br_avg: 5771 },
+    { date: "7/7", fr_n: 42, fr_avg: 5084, br_n: 55, br_avg: 5389 },
+    { date: "7/8", fr_n: 41, fr_avg: 5000, br_n: 67, br_avg: 5572 },
+    { date: "7/9", fr_n: 47, fr_avg: 5629, br_n: 61, br_avg: 5567 },
+    { date: "7/10", fr_n: 61, fr_avg: 5522, br_n: 68, br_avg: 5548 },
+    { date: "7/11", fr_n: 59, fr_avg: 4997, br_n: 85, br_avg: 5454 },
+    { date: "7/12", fr_n: 34, fr_avg: 5349, br_n: 72, br_avg: 5576 },
+    { date: "7/13", fr_n: 46, fr_avg: 5148, br_n: 60, br_avg: 5717 },
+    { date: "7/14", fr_n: 36, fr_avg: 5205, br_n: 54, br_avg: 5809 },
+    { date: "7/15", fr_n: 61, fr_avg: 5228, br_n: 69, br_avg: 5783 },
+    { date: "7/16", fr_n: 71, fr_avg: 4853, br_n: 56, br_avg: 4946 },
+    { date: "7/17", fr_n: 64, fr_avg: 5077, br_n: 66, br_avg: 5152 },
+    { date: "7/18", fr_n: 44, fr_avg: 5489, br_n: 89, br_avg: 5382 },
+    { date: "7/19", fr_n: 38, fr_avg: 4285, br_n: 80, br_avg: 5501 },
+    { date: "7/20", fr_n: 26, fr_avg: 5801, br_n: 47, br_avg: 5985 },
+    { date: "7/21", fr_n: 48, fr_avg: 5584, br_n: 64, br_avg: 5842 },
+  ],
+  "B_동대문": [
+    { date: "7/1", fr_n: 106, fr_avg: 6591, br_n: 308, br_avg: 4542 },
+    { date: "7/2", fr_n:  84, fr_avg: 5547, br_n: 355, br_avg: 4668 },
+    { date: "7/3", fr_n: 165, fr_avg: 5819, br_n: 379, br_avg: 4522 },
+    { date: "7/4", fr_n: 176, fr_avg: 5921, br_n: 489, br_avg: 4488 },
+    { date: "7/5", fr_n: 272, fr_avg: 9820, br_n: 488, br_avg: 4503 },
+    { date: "7/6", fr_n: 183, fr_avg: 5883, br_n: 229, br_avg: 4297 },
+    { date: "7/7", fr_n: 192, fr_avg: 5351, br_n: 252, br_avg: 4342 },
+    { date: "7/8", fr_n: 143, fr_avg: 5373, br_n: 282, br_avg: 4584 },
+    { date: "7/9", fr_n: 105, fr_avg: 5853, br_n: 364, br_avg: 4724 },
+    { date: "7/10", fr_n: 120, fr_avg: 5498, br_n: 433, br_avg: 4499 },
+    { date: "7/11", fr_n: 275, fr_avg: 5315, br_n: 429, br_avg: 4376 },
+    { date: "7/12", fr_n: 245, fr_avg: 5741, br_n: 528, br_avg: 4559 },
+    { date: "7/13", fr_n:  99, fr_avg: 4509, br_n: 318, br_avg: 4380 },
+    { date: "7/14", fr_n: 164, fr_avg: 6298, br_n: 287, br_avg: 4740 },
+    { date: "7/15", fr_n: 173, fr_avg: 5438, br_n: 401, br_avg: 4595 },
+    { date: "7/16", fr_n: 151, fr_avg: 4824, br_n: 351, br_avg: 4717 },
+    { date: "7/17", fr_n: 244, fr_avg: 5418, br_n: 489, br_avg: 4546 },
+    { date: "7/18", fr_n: 175, fr_avg: 4471, br_n: 472, br_avg: 4634 },
+    { date: "7/19", fr_n: 197, fr_avg: 4576, br_n: 466, br_avg: 4585 },
+    { date: "7/20", fr_n: 108, fr_avg: 5322, br_n: 327, br_avg: 4912 },
+    { date: "7/21", fr_n: 161, fr_avg: 5143, br_n: 303, br_avg: 4828 },
+  ],
+  "B_해운대": [
+    { date: "7/1", fr_n: 180, fr_avg: 4162, br_n: 141, br_avg: 4702 },
+    { date: "7/2", fr_n: 119, fr_avg: 3674, br_n: 176, br_avg: 4205 },
+    { date: "7/3", fr_n: 156, fr_avg: 3708, br_n: 162, br_avg: 4185 },
+    { date: "7/4", fr_n: 171, fr_avg: 3814, br_n: 174, br_avg: 4609 },
+    { date: "7/5", fr_n: 192, fr_avg: 4123, br_n: 161, br_avg: 4728 },
+    { date: "7/6", fr_n: 130, fr_avg: 3667, br_n: 154, br_avg: 4191 },
+    { date: "7/7", fr_n: 125, fr_avg: 3578, br_n: 125, br_avg: 4149 },
+    { date: "7/8", fr_n: 114, fr_avg: 3577, br_n: 140, br_avg: 4185 },
+    { date: "7/9", fr_n:  97, fr_avg: 3632, br_n: 139, br_avg: 4079 },
+    { date: "7/10", fr_n: 138, fr_avg: 3808, br_n: 171, br_avg: 4144 },
+    { date: "7/11", fr_n: 261, fr_avg: 3688, br_n: 236, br_avg: 4358 },
+    { date: "7/12", fr_n: 212, fr_avg: 3958, br_n: 142, br_avg: 4394 },
+    { date: "7/13", fr_n: 103, fr_avg: 4076, br_n: 159, br_avg: 4359 },
+    { date: "7/14", fr_n: 105, fr_avg: 3937, br_n: 195, br_avg: 4489 },
+    { date: "7/15", fr_n: 176, fr_avg: 3976, br_n: 120, br_avg: 4086 },
+    { date: "7/16", fr_n: 136, fr_avg: 3872, br_n: 139, br_avg: 4442 },
+    { date: "7/17", fr_n: 168, fr_avg: 3893, br_n: 213, br_avg: 4363 },
+    { date: "7/18", fr_n: 208, fr_avg: 3601, br_n: 184, br_avg: 4406 },
+    { date: "7/19", fr_n: 223, fr_avg: 3583, br_n: 193, br_avg: 4348 },
+    { date: "7/20", fr_n: 139, fr_avg: 3892, br_n: 159, br_avg: 4361 },
+    { date: "7/21", fr_n: 126, fr_avg: 3772, br_n: 166, br_avg: 4550 },
+  ],
+};
 
-const frBody = document.getElementById("friendsRecTable");
-let frTotPotDay = 0;
-friendsRecData.forEach(d => {
-  frTotPotDay += d.daily_potential;
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td class="center"><span style="background:#4338ca;color:white;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">${d.rank}</span></td>
-    <td style="font-weight:600">${d.region}</td>
-    <td class="num">${fmt(d.daily)}</td>
-    <td class="center"><span style="color:#b91c1c;font-weight:600">${d.friends_pct.toFixed(2)}%</span></td>
-    <td class="center"><span style="background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:5px;font-weight:700">+${d.gap.toFixed(2)}%p</span></td>
-    <td class="num"><strong style="color:#047857">+${fmt(d.daily_potential)}</strong></td>
-    <td class="num"><strong style="color:#065f46">+${fmt(d.daily_potential*7)}</strong></td>
-  `;
-  frBody.appendChild(tr);
-});
-document.getElementById("friendsRecTableFoot").innerHTML = `
-  <tr style="background:#f3f4f6;font-weight:700;border-top:2px solid #4338ca">
-    <td class="center" style="padding:10px 12px" colspan="5">Top 10 합산 잠재력</td>
-    <td class="num" style="padding:10px 12px;color:#047857">+${fmt(frTotPotDay)}</td>
-    <td class="num" style="padding:10px 12px;color:#065f46">+${fmt(frTotPotDay*7)}</td>
-  </tr>
-`;
+(function renderBZoneCost() {
+  const grid = document.getElementById("bZoneCostGrid");
+  if (!grid) return;
+  const zoneColors = {
+    "B_중랑":   { border: "#2E75B6" },
+    "B_원미":   { border: "#7030A0" },
+    "B_성북":   { border: "#C00000" },
+    "B_동대문": { border: "#00B050" },
+    "B_해운대": { border: "#ED7D31" }
+  };
+  Object.entries(bZoneCostData).forEach(([zone, rows]) => {
+    const card = document.createElement("div");
+    const color = zoneColors[zone] || { border: "#2E75B6" };
+    // summary
+    const totalFr = rows.reduce((s,r)=>s+r.fr_n,0);
+    const totalBr = rows.reduce((s,r)=>s+r.br_n,0);
+    const frOverall = rows.reduce((s,r)=>s+r.fr_avg*r.fr_n,0) / (totalFr||1);
+    const brOverall = rows.reduce((s,r)=>s+r.br_avg*r.br_n,0) / (totalBr||1);
+    const gap = frOverall - brOverall;
+    const gapColor = gap > 0 ? "#b91c1c" : "#047857";
+    const gapSign  = gap > 0 ? "+" : "";
+    card.style.cssText = `background:#f9fafb;border-radius:10px;padding:16px;border-left:4px solid ${color.border}`;
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:15px;font-weight:700;color:#111827">${zone}</div>
+        <div style="font-size:11px;color:#6b7280">
+          누적 평균: <span style="color:#ED7D31;font-weight:700">프 ${Math.round(frOverall).toLocaleString()}</span>
+          <span style="color:#9ca3af">/</span>
+          <span style="color:#2E75B6;font-weight:700">지 ${Math.round(brOverall).toLocaleString()}</span>
+          <span style="color:${gapColor};font-weight:700">GAP ${gapSign}${Math.round(gap).toLocaleString()}</span>
+        </div>
+      </div>
+      <div style="position:relative;height:200px">
+        <canvas id="chart_${zone}"></canvas>
+      </div>
+    `;
+    grid.appendChild(card);
+
+    // Wait until DOM inserted, then draw chart
+    const ctx = card.querySelector("canvas").getContext("2d");
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: rows.map(r=>r.date),
+        datasets: [
+          {
+            label: '프렌즈 평균원가',
+            data: rows.map(r=>r.fr_avg),
+            borderColor: '#ED7D31',
+            backgroundColor: 'rgba(237,125,49,0.10)',
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 2.5,
+            fill: false
+          },
+          {
+            label: '지점(그 외) 평균원가',
+            data: rows.map(r=>r.br_avg),
+            borderColor: '#2E75B6',
+            backgroundColor: 'rgba(46,117,182,0.10)',
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 2.5,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 14 } },
+          tooltip: {
+            callbacks: {
+              afterBody: function(items) {
+                const idx = items[0].dataIndex;
+                const r = rows[idx];
+                return [`프렌즈 건수: ${r.fr_n.toLocaleString()}`, `지점 건수: ${r.br_n.toLocaleString()}`];
+              },
+              label: function(c) { return `${c.dataset.label}: ${Math.round(c.parsed.y).toLocaleString()}원`; }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: { font: { size: 10 }, callback: v => v.toLocaleString() + '원' },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          },
+          x: {
+            ticks: { font: { size: 10 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  });
+})();
 
 // === 프렌즈 퀄리티 이슈 ===
 const qualityDate = "2026.7.21";
