@@ -207,7 +207,7 @@ table tbody tr:hover { background: #f9fafb; }
     </div>
     <div class="header-meta">
       <div>데이터 출처: 오더/배송 raw (Snowflake)</div>
-      <div>작성일: 2026.7.31</div>
+      <div>작성일: 2026.8.3</div>
       <div class="badge">완료 오더 기준 (취소 제외)</div>
     </div>
   </div>
@@ -339,7 +339,7 @@ table tbody tr:hover { background: #f9fafb; }
     <div class="card">
       <h2 style="color:#047857">지점 물량 급등 지역 Top 5</h2>
       <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
-        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(7/29~7/30) 평균<br>
+        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(8/1~8/2) 평균<br>
         <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
         <strong>대상</strong>: 관제지점(MONITORING_PARTNER_NAME) 단위 ・ 첫 2일 평균이 일 100건 이상인 지점만 비교(소표본 노이즈 제거)<br>
         <strong>해석</strong>: 양수(+)는 후반 물량이 늘어난 지점, 음수(−)는 줄어든 지점. 신규/이관 지점도 포함됩니다.
@@ -349,7 +349,7 @@ table tbody tr:hover { background: #f9fafb; }
     <div class="card">
       <h2 style="color:#b91c1c">지점 물량 급락 지역 Top 5</h2>
       <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
-        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(7/29~7/30) 평균<br>
+        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(8/1~8/2) 평균<br>
         <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
         <strong>대상</strong>: 관제지점(MONITORING_PARTNER_NAME) 단위 ・ 첫 2일 평균이 일 100건 이상인 지점만 비교(소표본 노이즈 제거)<br>
         <strong>해석</strong>: −100%는 후반 2일 모두 0건(폐쇄·이관·코드 변경 가능성) ・ 동일 권역 신규 지점과 페어 확인 권장.
@@ -363,7 +363,7 @@ table tbody tr:hover { background: #f9fafb; }
     <div class="card">
       <h2 style="color:#047857">프렌즈 물량 급등 시군구 Top 5</h2>
       <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
-        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(7/29~7/30) 평균<br>
+        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(8/1~8/2) 평균<br>
         <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
         <strong>대상</strong>: 프렌즈 완료 오더(EMPLOYMENT_TYPE = 부릉프렌즈)만 ・ 시군구(ORIGIN_SI_DO + ORIGIN_SI_GUN_GU) 단위 ・ 첫 2일 평균이 일 50건 이상인 시군구만 비교<br>
         <strong>해석</strong>: 양수(+)는 프렌즈 활용이 증가한 권역. 라이더 채용 성공/물량 유입을 의미합니다.
@@ -373,7 +373,7 @@ table tbody tr:hover { background: #f9fafb; }
     <div class="card">
       <h2 style="color:#b91c1c">프렌즈 물량 급락 시군구 Top 5</h2>
       <div style="font-size:11px;color:#6b7280;margin-bottom:12px;line-height:1.6">
-        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(7/29~7/30) 평균<br>
+        <strong>비교 기준</strong>: 첫 2일(7/1~7/2) 평균 vs 마지막 2일(8/1~8/2) 평균<br>
         <strong>증감률 산출</strong>: (마지막 2일 평균 − 첫 2일 평균) ÷ 첫 2일 평균 × 100%<br>
         <strong>대상</strong>: 프렌즈 완료 오더(EMPLOYMENT_TYPE = 부릉프렌즈)만 ・ 시군구(ORIGIN_SI_DO + ORIGIN_SI_GUN_GU) 단위 ・ 첫 2일 평균이 일 50건 이상인 시군구만 비교<br>
         <strong>해석</strong>: 음수(−)는 프렌즈 활용이 줄어든 권역. 라이더 이탈/물량 감소/타사 채널 전환 등 점검 필요.
@@ -618,7 +618,7 @@ table tbody tr:hover { background: #f9fafb; }
   </div>
 
   <div class="footer">
-    데이터 출처: 오더/배송 raw (Snowflake) ・ 일자별 분할 파일 자동 병합 ・ Ver.62 (7/30 추가)<br>
+    데이터 출처: 오더/배송 raw (Snowflake) ・ 일자별 분할 파일 자동 병합 ・ Ver.63 (7/31 마감 + 8/1~8/2 추가)<br>
     파일이 폴더에 추가될 때마다 동일한 형식으로 갱신 가능합니다.
   </div>
 
@@ -658,6 +658,9 @@ const dailyData = [
   { date: "7/28 (화)", orders: 142650, prev:   3713, pct:   2.67 },
   { date: "7/29 (수)", orders: 142895, prev:    245, pct:   0.17 },
   { date: "7/30 (목)", orders: 147982, prev:   5087, pct:   3.56 },
+  { date: "7/31 (금)", orders: 165539, prev:  17557, pct:  11.86 },
+  { date: "8/1 (토)",  orders: 194146, prev:  28607, pct:  17.28 },
+  { date: "8/2 (일)",  orders: 191980, prev:  -2166, pct:  -1.12 },
 ];
 
 const typeData = [
@@ -691,14 +694,17 @@ const typeData = [
   { date: "7/28", branch: 136036, friends: 6614 },
   { date: "7/29", branch: 135694, friends: 7201 },
   { date: "7/30", branch: 140541, friends: 7441 },
+  { date: "7/31", branch: 157403, friends: 8136 },
+  { date: "8/1",  branch: 184861, friends: 9285 },
+  { date: "8/2",  branch: 182857, friends: 9123 },
 ];
 
 const surgeData = [
-  { rank: 1, name: "대전정림지점",              early:  25, late: 173, change: 148, pct: 592.00 },
-  { rank: 2, name: "종로세종로지점",             early: 140, late: 515, change: 375, pct: 268.82 },
-  { rank: 3, name: "NET위탁사 DABAEDAL",      early:  27, late:  85, change:  59, pct: 220.75 },
-  { rank: 4, name: "포항오천지점",                 early:  49, late: 134, change:  85, pct: 175.26 },
-  { rank: 5, name: "제주외도지점",                 early:  28, late:  71, change:  43, pct: 153.57 },
+  { rank: 1, name: "대전정림지점",              early:  25, late: 227, change: 202, pct: 808.00 },
+  { rank: 2, name: "종로세종로지점",             early: 140, late: 560, change: 421, pct: 301.43 },
+  { rank: 3, name: "포항오천지점",                 early:  49, late: 187, change: 139, pct: 285.57 },
+  { rank: 4, name: "인천아라신도시지점",     early:  82, late: 309, change: 227, pct: 276.83 },
+  { rank: 5, name: "대전노은중앙지점",         early:  94, late: 298, change: 204, pct: 218.18 },
 ];
 
 const declineData = [
@@ -864,15 +870,15 @@ typeTableFoot.innerHTML = `
 
 // === NVP B Zone 현황 (마지막 일자 기준) ===
 const nvpZoneData = {
-  date: "2026.7.30",
+  date: "2026.8.2",
   zones: [
-    { zone: "B_중랑",   codes: ["p1008A","p1097B"], branch: 198, friends: 678, total: 876, oy_excluded: 0, sla_within: 810, sla_total: 876, sla_rate: 92.47 },
-    { zone: "B_원미",   codes: ["p1292B","p1255B"], branch: 130, friends: 533, total: 663, oy_excluded: 0, sla_within: 580, sla_total: 663, sla_rate: 87.48 },
-    { zone: "B_성북",   codes: ["p1055A"],            branch: 125, friends:  43, total: 168, oy_excluded: 0, sla_within: 116, sla_total: 168, sla_rate: 69.05 },
-    { zone: "B_동대문", codes: ["p1054A"],            branch: 404, friends: 168, total: 572, oy_excluded: 0, sla_within: 514, sla_total: 572, sla_rate: 89.86 },
-    { zone: "B_해운대", codes: ["p167C"],              branch: 134, friends: 228, total: 362, oy_excluded: 0, sla_within: 222, sla_total: 362, sla_rate: 61.33 },
-    { zone: "B_성동",   codes: ["p1056A"],            branch: 179, friends:  20, total: 199, oy_excluded: 0, sla_within: 182, sla_total: 199, sla_rate: 91.46 },
-    { zone: "B_미추홀", codes: ["p1254B","p1319B"],    branch:   6, friends: 192, total: 198, oy_excluded: 0, sla_within: 131, sla_total: 198, sla_rate: 66.16 }
+    { zone: "B_중랑",   codes: ["p1008A","p1097B"], branch: 304, friends:1097, total:1401, oy_excluded: 0, sla_within:1206, sla_total:1401, sla_rate: 86.08 },
+    { zone: "B_원미",   codes: ["p1292B","p1255B"], branch:  77, friends: 842, total: 919, oy_excluded: 0, sla_within: 666, sla_total: 919, sla_rate: 72.47 },
+    { zone: "B_성북",   codes: ["p1055A"],            branch: 157, friends:  44, total: 201, oy_excluded: 0, sla_within: 159, sla_total: 201, sla_rate: 79.10 },
+    { zone: "B_동대문", codes: ["p1054A"],            branch: 624, friends: 282, total: 906, oy_excluded: 0, sla_within: 736, sla_total: 906, sla_rate: 81.24 },
+    { zone: "B_해운대", codes: ["p167C"],              branch: 254, friends: 286, total: 540, oy_excluded: 0, sla_within: 398, sla_total: 540, sla_rate: 73.70 },
+    { zone: "B_성동",   codes: ["p1056A"],            branch: 248, friends:  66, total: 314, oy_excluded: 0, sla_within: 249, sla_total: 314, sla_rate: 79.30 },
+    { zone: "B_미추홀", codes: ["p1254B","p1319B"],    branch:   9, friends: 286, total: 295, oy_excluded: 0, sla_within: 218, sla_total: 295, sla_rate: 73.90 }
   ]
 };
 
@@ -953,19 +959,19 @@ renderTopList("declineList", declineData, true);
 
 // === 프렌즈 시군구 급등/급락 Top 5 ===
 const friendsSurgeData = [
-  { rank: 1, name: "서울특별시 송파구",             early:  41, late: 175, change: 134, pct: 330.86 },
-  { rank: 2, name: "인천광역시 서구",                 early:  86, late: 301, change: 215, pct: 251.46 },
-  { rank: 3, name: "경기도 광명시",                     early:  62, late: 211, change: 150, pct: 243.09 },
-  { rank: 4, name: "인천광역시 미추홀구",         early:  79, late: 225, change: 146, pct: 185.99 },
-  { rank: 5, name: "경기도 안양시 동안구",         early:  31, late:  84, change:  53, pct: 169.35 },
+  { rank: 1, name: "경기도 광명시",                     early:  62, late: 362, change: 300, pct: 487.80 },
+  { rank: 2, name: "서울특별시 송파구",             early:  41, late: 208, change: 168, pct: 413.58 },
+  { rank: 3, name: "인천광역시 서구",                 early:  86, late: 378, change: 293, pct: 342.11 },
+  { rank: 4, name: "인천광역시 미추홀구",         early:  79, late: 339, change: 260, pct: 331.21 },
+  { rank: 5, name: "경기도 안양시 동안구",         early:  31, late: 104, change:  73, pct: 233.87 },
 ];
 
 const friendsDeclineData = [
-  { rank: 1, name: "충청북도 청주시 상당구",     early: 39, late:  9, change: -30, pct: -76.92 },
-  { rank: 2, name: "충청남도 천안시 서북구",     early: 91, late: 28, change: -63, pct: -69.06 },
-  { rank: 3, name: "경상남도 양산시",                 early: 40, late: 14, change: -26, pct: -64.56 },
-  { rank: 4, name: "부산광역시 남구",                 early: 48, late: 18, change: -30, pct: -62.50 },
-  { rank: 5, name: "경기도 고양시 일산서구",     early: 32, late: 12, change: -20, pct: -61.90 },
+  { rank: 1, name: "충청북도 청주시 상당구",     early: 39, late:  0, change: -39, pct: -100.00 },
+  { rank: 2, name: "광주광역시 광산구",             early: 72, late: 22, change: -50, pct:  -69.93 },
+  { rank: 3, name: "부산광역시 중구",                 early: 37, late: 12, change: -25, pct:  -68.49 },
+  { rank: 4, name: "경상남도 양산시",                 early: 40, late: 14, change: -26, pct:  -65.82 },
+  { rank: 5, name: "광주광역시 서구",                 early: 63, late: 25, change: -39, pct:  -61.11 },
 ];
 
 renderTopList("friendsSurgeList", friendsSurgeData, false);
@@ -1003,6 +1009,9 @@ const yogiyoMorningData = [
   { date: "7/28 (화)", branch: 129, friends: 36, cancel:  5, total: 170 },
   { date: "7/29 (수)", branch: 155, friends: 32, cancel:  3, total: 190 },
   { date: "7/30 (목)", branch: 142, friends: 28, cancel:  6, total: 176 },
+  { date: "7/31 (금)", branch: 175, friends: 35, cancel:  1, total: 211 },
+  { date: "8/1 (토)",  branch: 194, friends: 48, cancel:  6, total: 248 },
+  { date: "8/2 (일)",  branch: 211, friends: 31, cancel:  9, total: 251 },
 ];
 
 const ymBody = document.getElementById("yogiyoMorningTable");
@@ -1088,6 +1097,9 @@ const starbucksMorningData = [
   { date: "7/28 (화)", total:  687, branch:  565, friends:  78, cancel:  44, completed:  643 },
   { date: "7/29 (수)", total:  742, branch:  608, friends:  81, cancel:  53, completed:  689 },
   { date: "7/30 (목)", total:  746, branch:  628, friends:  85, cancel:  33, completed:  713 },
+  { date: "7/31 (금)", total:  979, branch:  809, friends: 104, cancel:  66, completed:  913 },
+  { date: "8/1 (토)",  total: 1269, branch: 1039, friends: 124, cancel: 106, completed: 1163 },
+  { date: "8/2 (일)",  total: 1251, branch:  982, friends: 137, cancel: 132, completed: 1119 },
 ];
 
 const sbBody = document.getElementById("starbucksMorningTable");
@@ -1157,6 +1169,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 628, fr_avg: 5146, br_n: 218, br_avg: 4440 },
     { date: "7/29", fr_n: 542, fr_avg: 5115, br_n: 291, br_avg: 4373 },
     { date: "7/30", fr_n: 678, fr_avg: 4846, br_n: 198, br_avg: 4416 },
+    { date: "7/31", fr_n: 788, fr_avg: 5062, br_n: 263, br_avg: 4396 },
+    { date: "8/1",  fr_n:1075, fr_avg: 5183, br_n: 337, br_avg: 4330 },
+    { date: "8/2",  fr_n:1097, fr_avg: 5382, br_n: 304, br_avg: 4442 },
   ],
   "B_원미": [
     { date: "7/1", fr_n: 538, fr_avg: 4699, br_n:  98, br_avg: 3624 },
@@ -1189,6 +1204,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 555, fr_avg: 4737, br_n:  94, br_avg: 4318 },
     { date: "7/29", fr_n: 583, fr_avg: 4389, br_n:  89, br_avg: 4069 },
     { date: "7/30", fr_n: 533, fr_avg: 4581, br_n: 130, br_avg: 4230 },
+    { date: "7/31", fr_n: 625, fr_avg: 4567, br_n: 132, br_avg: 4155 },
+    { date: "8/1",  fr_n: 795, fr_avg: 4584, br_n: 191, br_avg: 4190 },
+    { date: "8/2",  fr_n: 842, fr_avg: 4723, br_n:  77, br_avg: 4272 },
   ],
   "B_성북": [
     { date: "7/1", fr_n: 42, fr_avg: 4683, br_n: 81, br_avg: 4789 },
@@ -1221,6 +1239,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 31, fr_avg: 4656, br_n: 155, br_avg: 4540 },
     { date: "7/29", fr_n: 52, fr_avg: 5103, br_n: 108, br_avg: 4309 },
     { date: "7/30", fr_n: 43, fr_avg: 5229, br_n: 125, br_avg: 4551 },
+    { date: "7/31", fr_n: 53, fr_avg: 5294, br_n: 139, br_avg: 4402 },
+    { date: "8/1",  fr_n: 62, fr_avg: 5208, br_n: 151, br_avg: 4754 },
+    { date: "8/2",  fr_n: 44, fr_avg: 5468, br_n: 157, br_avg: 4606 },
   ],
   "B_동대문": [
     { date: "7/1", fr_n: 106, fr_avg: 6591, br_n: 308, br_avg: 4542 },
@@ -1253,6 +1274,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 202, fr_avg: 5331, br_n: 355, br_avg: 4762 },
     { date: "7/29", fr_n: 247, fr_avg: 5586, br_n: 308, br_avg: 4835 },
     { date: "7/30", fr_n: 168, fr_avg: 5177, br_n: 404, br_avg: 4771 },
+    { date: "7/31", fr_n: 204, fr_avg: 5287, br_n: 510, br_avg: 4725 },
+    { date: "8/1",  fr_n: 209, fr_avg: 5462, br_n: 682, br_avg: 4746 },
+    { date: "8/2",  fr_n: 282, fr_avg: 5572, br_n: 624, br_avg: 4797 },
   ],
   "B_해운대": [
     { date: "7/1", fr_n: 180, fr_avg: 4162, br_n: 141, br_avg: 4702 },
@@ -1285,6 +1309,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 194, fr_avg: 4107, br_n: 188, br_avg: 5136 },
     { date: "7/29", fr_n: 239, fr_avg: 4379, br_n: 150, br_avg: 4806 },
     { date: "7/30", fr_n: 228, fr_avg: 4532, br_n: 134, br_avg: 4784 },
+    { date: "7/31", fr_n: 268, fr_avg: 4835, br_n: 186, br_avg: 4951 },
+    { date: "8/1",  fr_n: 277, fr_avg: 4982, br_n: 237, br_avg: 5185 },
+    { date: "8/2",  fr_n: 286, fr_avg: 5236, br_n: 254, br_avg: 5443 },
   ],
   "B_성동": [
     // p1056A — 7/22 첫 관측 시작 · 이전 일자는 관측 전
@@ -1318,6 +1345,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 24, fr_avg: 6559, br_n: 139, br_avg: 4263 },
     { date: "7/29", fr_n: 13, fr_avg: 6029, br_n: 125, br_avg: 4271 },
     { date: "7/30", fr_n: 20, fr_avg: 6064, br_n: 179, br_avg: 4433 },
+    { date: "7/31", fr_n: 20, fr_avg: 5393, br_n: 219, br_avg: 4417 },
+    { date: "8/1",  fr_n: 80, fr_avg: 6639, br_n: 223, br_avg: 4590 },
+    { date: "8/2",  fr_n: 66, fr_avg: 6499, br_n: 248, br_avg: 4568 },
   ],
   "B_미추홀": [
     { date: "7/1",  fr_n:  59, fr_avg: 5039, br_n: 11, br_avg: 4568 },
@@ -1350,6 +1380,9 @@ const bZoneCostData = {
     { date: "7/28", fr_n: 120, fr_avg: 4010, br_n: 15, br_avg: 2307 },
     { date: "7/29", fr_n: 175, fr_avg: 4463, br_n:  7, br_avg: 2777 },
     { date: "7/30", fr_n: 192, fr_avg: 4662, br_n:  6, br_avg: 3767 },
+    { date: "7/31", fr_n: 197, fr_avg: 5925, br_n:  0, br_avg:    0 },
+    { date: "8/1",  fr_n: 300, fr_avg: 5946, br_n:  1, br_avg: 4500 },
+    { date: "8/2",  fr_n: 286, fr_avg: 5918, br_n:  9, br_avg: 5113 },
   ],
 };
 
@@ -1466,7 +1499,7 @@ const bZoneCostData = {
 })();
 
 // === 프렌즈 퀄리티 이슈 ===
-const qualityDate = "2026.7.30";
+const qualityDate = "2026.8.2";
 document.getElementById("qualityDate1").textContent = qualityDate;
 document.querySelectorAll(".qualityDate").forEach(el => el.textContent = qualityDate);
 
@@ -1480,11 +1513,11 @@ function slaColorR(rate) {
 
 // 1. 퀄리티 이슈 지역 Top 5
 const qualityIssueRegions = [
-  { rank: 1, region: "부산광역시 부산진구",   total: 99, within: 18, rate: 18.18 },
-  { rank: 2, region: "경기도 수원시 장안구", total: 45, within: 11, rate: 24.44 },
-  { rank: 3, region: "부산광역시 수영구",       total: 45, within: 11, rate: 24.44 },
-  { rank: 4, region: "경기도 성남시 수정구", total: 36, within:  9, rate: 25.00 },
-  { rank: 5, region: "경기도 수원시 영통구", total: 47, within: 13, rate: 27.66 },
+  { rank: 1, region: "부산광역시 부산진구",   total:  93, within:  8, rate:  8.60 },
+  { rank: 2, region: "부산광역시 수영구",       total:  62, within:  7, rate: 11.29 },
+  { rank: 3, region: "경기도 안양시 동안구", total: 109, within: 20, rate: 18.35 },
+  { rank: 4, region: "경기도 수원시 권선구", total:  54, within: 13, rate: 24.07 },
+  { rank: 5, region: "경기도 용인시 수지구", total:  53, within: 14, rate: 26.42 },
 ];
 const qBody = document.getElementById("qualityIssueRegionTable");
 qualityIssueRegions.forEach(r => {
@@ -1503,11 +1536,11 @@ qualityIssueRegions.forEach(r => {
 
 // 2-1. 우수 프렌즈 라이더 Top 5
 const topAgents = [
-  { rank: 1, name: "프)서정환", partner: "광명철산지점",                              total: 60, rate: 51.67 },
-  { rank: 2, name: "프)이다운", partner: "[본사직영]HY중랑직영센터[통합]", total: 42, rate: 92.86 },
-  { rank: 3, name: "프)김찬수", partner: "안산중앙지점",                              total: 42, rate: 38.10 },
-  { rank: 4, name: "프)강덕훈", partner: "[본사직영]HY중랑직영센터[통합]", total: 41, rate: 97.56 },
-  { rank: 5, name: "프)송주형", partner: "인천미추홀공유지점",                 total: 40, rate: 55.00 },
+  { rank: 1, name: "프)최장일", partner: "대전시청지점",                              total: 83, rate: 74.70 },
+  { rank: 2, name: "프)김서용", partner: "강남역삼지점",                              total: 69, rate: 75.36 },
+  { rank: 3, name: "프)강덕훈", partner: "[본사직영]HY중랑직영센터[통합]", total: 60, rate: 90.00 },
+  { rank: 4, name: "프)서정환", partner: "광명광명지점",                              total: 52, rate: 44.23 },
+  { rank: 5, name: "프)김찬수", partner: "안산고잔1지점",                           total: 52, rate: 30.77 },
 ];
 const taList = document.getElementById("topAgentList");
 topAgents.forEach(a => {
@@ -1527,11 +1560,11 @@ topAgents.forEach(a => {
 
 // 2-2. 퀄리티 이슈 프렌즈 Top 5
 const worstAgents = [
-  { rank: 1, name: "프)박성수",   partner: "부산남구수영지점", total: 16, within: 0, rate: 0.00 },
-  { rank: 2, name: "프)김수익",   partner: "부산부전지점",         total:  8, within: 0, rate: 0.00 },
-  { rank: 3, name: "프)유승훈",   partner: "성남중앙지점",         total: 22, within: 1, rate: 4.55 },
-  { rank: 4, name: "프)박영진",   partner: "수원인계지점",         total: 20, within: 1, rate: 5.00 },
-  { rank: 5, name: "프)안효진2", partner: "부산부전지점",         total: 18, within: 1, rate: 5.56 },
+  { rank: 1, name: "프)박성수", partner: "부산남구수영지점", total: 26, within: 0, rate: 0.00 },
+  { rank: 2, name: "프)이우영", partner: "안양관양지점",         total: 14, within: 0, rate: 0.00 },
+  { rank: 3, name: "프)이신규", partner: "성남중앙지점",         total: 13, within: 0, rate: 0.00 },
+  { rank: 4, name: "프)이동인", partner: "부산부전지점",         total: 11, within: 0, rate: 0.00 },
+  { rank: 5, name: "프)조진배", partner: "성남중앙지점",         total: 20, within: 1, rate: 5.00 },
 ];
 const waList = document.getElementById("worstAgentList");
 worstAgents.forEach(a => {
@@ -1564,20 +1597,20 @@ document.getElementById("starbucksMorningTableFoot").innerHTML = `
 
 // === 요기요OD 지역별 SLA ===
 const yogiyoRegionData = [
-  { region:"경기", total:7464, branch:6241, friends:1223, sla:79.78, branch_sla:79.78, friends_sla:79.80 },
-  { region:"서울", total:4980, branch:3704, friends:1276, sla:76.77, branch_sla:75.51, friends_sla:80.41 },
-  { region:"인천", total:2372, branch:1979, friends: 393, sla:77.11, branch_sla:77.92, friends_sla:73.03 },
-  { region:"광주", total:1666, branch:1583, friends:  83, sla:76.35, branch_sla:76.75, friends_sla:68.67 },
-  { region:"부산", total:1372, branch:1182, friends: 190, sla:69.24, branch_sla:70.90, friends_sla:58.95 },
-  { region:"대구", total:1320, branch:1115, friends: 205, sla:76.89, branch_sla:75.78, friends_sla:82.93 },
-  { region:"전북", total:1117, branch:1065, friends:  52, sla:87.38, branch_sla:87.42, friends_sla:86.54 },
-  { region:"충남", total: 947, branch: 905, friends:  42, sla:84.05, branch_sla:84.97, friends_sla:64.29 },
-  { region:"경북", total: 909, branch: 904, friends:   5, sla:84.05, branch_sla:84.07, friends_sla:80.00 },
-  { region:"경남", total: 829, branch: 792, friends:  37, sla:81.66, branch_sla:81.94, friends_sla:75.68 },
-  { region:"대전", total: 759, branch: 650, friends: 109, sla:80.50, branch_sla:81.08, friends_sla:77.06 },
-  { region:"충북", total: 714, branch: 685, friends:  29, sla:78.01, branch_sla:78.10, friends_sla:75.86 },
-  { region:"전남", total: 564, branch: 564, friends:   0, sla:76.60, branch_sla:76.60, friends_sla:null   },
-  { region:"강원", total: 178, branch: 177, friends:   1, sla:83.15, branch_sla:83.05, friends_sla:100.00 },
+  { region:"경기", total:10260, branch:8733, friends:1527, sla:74.41, branch_sla:75.17, friends_sla:70.01 },
+  { region:"서울", total: 7013, branch:5663, friends:1350, sla:71.21, branch_sla:69.91, friends_sla:76.67 },
+  { region:"인천", total: 2832, branch:2317, friends: 515, sla:75.18, branch_sla:74.67, friends_sla:77.48 },
+  { region:"광주", total: 2018, branch:1971, friends:  47, sla:73.64, branch_sla:74.12, friends_sla:53.19 },
+  { region:"부산", total: 1632, branch:1455, friends: 177, sla:64.58, branch_sla:64.67, friends_sla:63.84 },
+  { region:"대구", total: 1499, branch:1315, friends: 184, sla:77.45, branch_sla:77.57, friends_sla:76.63 },
+  { region:"전북", total: 1376, branch:1334, friends:  42, sla:75.51, branch_sla:75.86, friends_sla:64.29 },
+  { region:"경북", total: 1129, branch:1125, friends:   4, sla:81.22, branch_sla:81.24, friends_sla:75.00 },
+  { region:"충남", total: 1116, branch:1035, friends:  81, sla:81.00, branch_sla:80.68, friends_sla:85.19 },
+  { region:"경남", total: 1097, branch:1057, friends:  40, sla:79.58, branch_sla:79.47, friends_sla:82.50 },
+  { region:"대전", total: 1004, branch: 885, friends: 119, sla:72.51, branch_sla:72.66, friends_sla:71.43 },
+  { region:"충북", total:  922, branch: 915, friends:   7, sla:80.26, branch_sla:80.44, friends_sla:57.14 },
+  { region:"전남", total:  696, branch: 696, friends:   0, sla:61.21, branch_sla:61.21, friends_sla:null   },
+  { region:"강원", total:  210, branch: 209, friends:   1, sla:78.10, branch_sla:77.99, friends_sla:100.00 },
 ];
 const yrTable = document.getElementById("yogiyoRegionTable");
 let yrTotTotal=0, yrTotBranch=0, yrTotFriends=0;
@@ -1620,18 +1653,18 @@ document.getElementById("yogiyoRegionTableFoot").innerHTML = `
 
 // === 요기요OD 취소 Top 10 Zone ===
 const yogiyoCancelData = {
-  totalAll: 714,
+  totalAll: 1356,
   zones: [
-    { rank: 1, zone: "남동",         total: 36, dongs: [["남동구 만수동",26],["남동구 간석동",4],["남동구 구월동",4],["부평구 십정동",1],["미추홀구 주안동",1]] },
-    { rank: 2, zone: "북대전",       total: 33, dongs: [["유성구 관평동",18],["유성구 송강동",9],["유성구 전민동",5],["유성구 문지동",1]] },
-    { rank: 3, zone: "부산진/사상",  total: 30, dongs: [["부산진구 부전동",19],["부산진구 전포동",5],["부산진구 양정동",3],["부산진구 초읍동",1],["사상구 학장동",1],["부산진구 당감동",1]] },
-    { rank: 4, zone: "금정/동래",    total: 26, dongs: [["연제구 연산동",7],["부산진구 양정동",7],["동래구 온천동",4],["수영구 망미동",3],["동래구 사직동",1],["동래구 안락동",1],["금정구 장전동",1],["연제구 거제동",1]] },
-    { rank: 5, zone: "분당정자",     total: 25, dongs: [["성남시 분당구 서현동",18],["성남시 분당구 정자동",4],["성남시 분당구 수내동",3]] },
-    { rank: 6, zone: "서초/강남",    total: 24, dongs: [["강남구 역삼동",10],["서초구 서초동",4],["서초구 방배동",3],["강남구 논현동",2],["서초구 잠원동",2],["강남구 도곡동",1],["강남구 삼성동",1],["강남구 청담동",1]] },
-    { rank: 7, zone: "대덕",         total: 23, dongs: [["중구 태평동",5],["중구 용두동",3],["중구 대흥동",3],["동구 신흥동",2],["중구 오류동",2],["중구 선화동",2],["동구 가양동",1],["동구 성남동",1]] },
-    { rank: 8, zone: "구로",         total: 19, dongs: [["구로구 구로동",12],["금천구 가산동",6],["구로구 신도림동",1]] },
-    { rank: 9, zone: "하남",         total: 19, dongs: [["하남시 덕풍동",8],["하남시 망월동",7],["하남시 풍산동",3],["하남시 신장동",1]] },
-    { rank:10, zone: "사하/영도",    total: 19, dongs: [["사하구 괴정동",11],["동구 초량동",3],["서구 서대신동3가",2],["사하구 감천동",2],["서구 서대신동2가",1]] }
+    { rank: 1, zone: "대덕",         total: 62, dongs: [["중구 태평동",11],["중구 대사동",8],["중구 유천동",7],["중구 대흥동",7],["중구 선화동",4],["중구 문화동",4],["동구 가양동",3],["중구 오류동",3]] },
+    { rank: 2, zone: "부산진/사상",  total: 52, dongs: [["부산진구 부전동",39],["부산진구 전포동",5],["부산진구 양정동",5],["사상구 주례동",1],["부산진구 당감동",1],["사상구 괘법동",1]] },
+    { rank: 3, zone: "광진",         total: 50, dongs: [["성동구 성수동2가",14],["광진구 구의동",9],["광진구 자양동",8],["광진구 화양동",8],["성동구 성수동1가",6],["광진구 중곡동",3],["성동구 송정동",1],["광진구 군자동",1]] },
+    { rank: 4, zone: "영등포",       total: 49, dongs: [["영등포구 여의도동",14],["영등포구 당산동1가",7],["영등포구 양평동1가",6],["영등포구 당산동2가",5],["영등포구 영등포동4가",3],["영등포구 문래동6가",3],["영등포구 영등포동3가",3],["영등포구 문래동3가",2]] },
+    { rank: 5, zone: "양주옥정",     total: 48, dongs: [["양주시 옥정동",40],["양주시 삼숭동",5],["양주시 광사동",2],["양주시 만송동",1]] },
+    { rank: 6, zone: "원미",         total: 35, dongs: [["부천시 원미구 중동",12],["부천시 중동",7],["부천시 원미구 상동",4],["부천시 심곡본동",3],["부천시 상동",3],["부천시 심곡동",2],["부천시 원미구 심곡동",2],["부천시 송내동",1]] },
+    { rank: 7, zone: "안산단원",     total: 34, dongs: [["안산시 단원구 고잔동",32],["안산시 단원구 선부동",2]] },
+    { rank: 8, zone: "화성영천",     total: 33, dongs: [["화성시 영천동",16],["화성시 청계동",7],["화성시 오산동",5],["화성시 동탄구 오산동",3],["화성시 동탄구 영천동",2]] },
+    { rank: 9, zone: "강동",         total: 32, dongs: [["강동구 천호동",11],["강동구 길동",9],["강동구 명일동",6],["강동구 성내동",2],["강동구 둔촌동",2],["강동구 암사동",1],["강동구 고덕동",1]] },
+    { rank:10, zone: "강서",         total: 32, dongs: [["강서구 화곡동",24],["강서구 마곡동",6],["강서구 방화동",2]] }
   ]
 };
 (function renderYogiyoCancel() {
@@ -1664,42 +1697,42 @@ const yogiyoCancelData = {
 
 // === NVP B zone 시간대 프로모션 추천 (전일자 기준) ===
 const nvpPromoData = {
-  date: "2026.7.30",
+  date: "2026.8.2",
   zones: [
-    { zone: "B_중랑", overallSla: 92.47, totalCancel:  6, recs: [
-      { rank: 1, label: "18:00~19:00", cancel: 0, sla: 85.25, note: "저녁 피크 SLA 최저 (완료 122건)" },
-      { rank: 2, label: "21:00~22:00", cancel: 0, sla: 86.79, note: "야간 SLA 저조 (완료 53건)" },
-      { rank: 3, label: "08:00~09:00", cancel: 3, sla: 91.67, note: "오전 취소 최다 (완료 12건, 표본 작음)" }
+    { zone: "B_중랑", overallSla: 86.08, totalCancel: 30, recs: [
+      { rank: 1, label: "18:00~19:00", cancel: 4, sla: 75.00, note: "저녁 피크 SLA 최저 (완료 132건)" },
+      { rank: 2, label: "17:00~18:00", cancel: 3, sla: 76.27, note: "오후 피크 SLA 저조 (완료 118건)" },
+      { rank: 3, label: "15:00~16:00", cancel: 5, sla: 87.13, note: "오후 취소 최다 (완료 101건)" }
     ]},
-    { zone: "B_원미", overallSla: 87.48, totalCancel:  8, recs: [
-      { rank: 1, label: "18:00~19:00", cancel: 0, sla: 70.33, note: "저녁 피크 SLA 최저 (완료 91건)" },
-      { rank: 2, label: "10:00~11:00", cancel: 2, sla: 83.33, note: "오전 취소 (완료 30건)" },
-      { rank: 3, label: "11:00~12:00", cancel: 3, sla: 89.23, note: "오전 취소 최다 (완료 65건)" }
+    { zone: "B_원미", overallSla: 72.47, totalCancel: 80, recs: [
+      { rank: 1, label: "14:00~15:00", cancel:17, sla: 54.10, note: "🚨 오후 SLA·취소 최악 (완료 61건)" },
+      { rank: 2, label: "10:00~11:00", cancel: 2, sla: 58.82, note: "오전 SLA 저조 (완료 51건)" },
+      { rank: 3, label: "18:00~19:00", cancel: 9, sla: 62.39, note: "저녁 피크 SLA + 취소 최다 (완료 117건)" }
     ]},
-    { zone: "B_성북", overallSla: 69.05, totalCancel:  8, recs: [
-      { rank: 1, label: "19:00~20:00", cancel: 1, sla: 39.39, note: "🚨 저녁 피크 SLA 붕괴 (완료 33건)" },
-      { rank: 2, label: "18:00~19:00", cancel: 1, sla: 56.00, note: "저녁 피크 SLA 저조 (완료 25건)" },
-      { rank: 3, label: "20:00~21:00", cancel: 1, sla: 62.50, note: "야간 SLA 저조 (완료 16건)" }
+    { zone: "B_성북", overallSla: 79.10, totalCancel:  6, recs: [
+      { rank: 1, label: "13:00~14:00", cancel: 1, sla: 62.50, note: "점심 SLA 최저 (완료 24건)" },
+      { rank: 2, label: "12:00~13:00", cancel: 0, sla: 72.73, note: "점심 SLA 저조 (완료 22건)" },
+      { rank: 3, label: "19:00~20:00", cancel: 0, sla: 73.91, note: "저녁 피크 SLA 저조 (완료 23건)" }
     ]},
-    { zone: "B_동대문", overallSla: 89.86, totalCancel:  5, recs: [
-      { rank: 1, label: "19:00~20:00", cancel: 1, sla: 80.52, note: "저녁 피크 SLA 최저 (완료 77건)" },
-      { rank: 2, label: "20:00~21:00", cancel: 0, sla: 84.00, note: "야간 SLA 저조 (완료 50건)" },
-      { rank: 3, label: "15:00~16:00", cancel: 2, sla: 96.97, note: "오후 취소 최다 (SLA 양호)" }
+    { zone: "B_동대문", overallSla: 81.24, totalCancel: 15, recs: [
+      { rank: 1, label: "18:00~19:00", cancel: 1, sla: 63.20, note: "🚨 저녁 피크 SLA 최저 (완료 125건)" },
+      { rank: 2, label: "17:00~18:00", cancel: 1, sla: 71.96, note: "오후 피크 SLA 저조 (완료 107건)" },
+      { rank: 3, label: "13:00~14:00", cancel: 1, sla: 77.11, note: "점심 SLA 저조 (완료 83건)" }
     ]},
-    { zone: "B_해운대", overallSla: 61.33, totalCancel: 39, recs: [
-      { rank: 1, label: "19:00~20:00", cancel: 5, sla: 38.71, note: "🚨 저녁 피크 SLA 붕괴 (완료 31건)" },
-      { rank: 2, label: "20:00~21:00", cancel: 7, sla: 42.31, note: "🚨 야간 SLA + 취소 최다 (완료 26건)" },
-      { rank: 3, label: "17:00~18:00", cancel: 7, sla: 65.52, note: "오후 피크 취소 (완료 29건)" }
+    { zone: "B_해운대", overallSla: 73.70, totalCancel: 27, recs: [
+      { rank: 1, label: "11:00~12:00", cancel: 2, sla: 56.52, note: "점심 전 SLA 최저 (완료 46건)" },
+      { rank: 2, label: "10:00~11:00", cancel: 7, sla: 60.00, note: "오전 SLA + 취소 최다 (완료 35건)" },
+      { rank: 3, label: "15:00~16:00", cancel: 2, sla: 64.52, note: "오후 SLA 저조 (완료 31건)" }
     ]},
-    { zone: "B_성동", overallSla: 91.46, totalCancel:  7, recs: [
-      { rank: 1, label: "14:00~15:00", cancel: 0, sla: 58.06, note: "오후 SLA 최저 (완료 31건)" },
-      { rank: 2, label: "16:00~17:00", cancel: 1, sla: 93.33, note: "오후 SLA 저조 (완료 15건)" },
-      { rank: 3, label: "15:00~16:00", cancel: 1, sla: 76.92, note: "오후 취소 (완료 13건)" }
+    { zone: "B_성동", overallSla: 79.30, totalCancel: 16, recs: [
+      { rank: 1, label: "14:00~15:00", cancel: 3, sla: 46.67, note: "🚨 오후 SLA 붕괴 (완료 45건)" },
+      { rank: 2, label: "10:00~11:00", cancel: 0, sla: 53.85, note: "오전 SLA 저조 (완료 39건)" },
+      { rank: 3, label: "11:00~12:00", cancel: 3, sla: 54.17, note: "오전 SLA + 취소 (완료 24건)" }
     ]},
-    { zone: "B_미추홀", overallSla: 66.16, totalCancel: 18, recs: [
-      { rank: 1, label: "20:00~21:00", cancel: 2, sla: 50.00, note: "야간 SLA 최저 (완료 16건)" },
-      { rank: 2, label: "17:00~18:00", cancel: 0, sla: 52.17, note: "오후 피크 SLA 저조 (완료 23건)" },
-      { rank: 3, label: "22:00~23:00", cancel: 7, sla:100.00, note: "심야 취소 최다 (SLA 양호, 표본 1건)" }
+    { zone: "B_미추홀", overallSla: 73.90, totalCancel: 11, recs: [
+      { rank: 1, label: "16:00~17:00", cancel: 0, sla: 37.50, note: "🚨 오후 SLA 최악 (완료 16건)" },
+      { rank: 2, label: "14:00~15:00", cancel: 3, sla: 40.74, note: "오후 SLA + 취소 (완료 27건)" },
+      { rank: 3, label: "15:00~16:00", cancel: 2, sla: 47.06, note: "오후 SLA 저조 (완료 17건)" }
     ]}
   ]
 };
